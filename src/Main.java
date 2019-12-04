@@ -1,5 +1,7 @@
 import java.time.Period;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
@@ -19,5 +21,7 @@ public class Main {
         Day4.day4a();
 
         Day4.day4b();
+
+        System.out.println(Day4.checkIfPass2(11222333));
     }
 }
