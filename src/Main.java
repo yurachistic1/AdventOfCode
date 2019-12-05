@@ -18,10 +18,10 @@ public class Main {
 
         //Day3.Day3b();
 
-        Day4.day4a();
+        //Day4.day4a();
 
-        Day4.day4b();
+        //Day4.day4b();
 
-        System.out.println(Day4.checkIfPass2(11222333));
+        Day5.Day5a();
     }
 }
