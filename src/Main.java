@@ -22,6 +22,8 @@ public class Main {
 
         //Day4.day4b();
 
-        Day5.Day5a();
+        //Day5.Day5a();
+
+        //Day5.Day5b();
     }
 }

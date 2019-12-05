@@ -38,6 +38,28 @@ public class UtilityFunctions {
         return full;
     }
 
+    public static int[] convertInputToIntArray(String path) throws Exception {
+
+        File file = new File(path);
+
+        BufferedReader br = new BufferedReader(new FileReader(file));
+
+        String full = "";
+        String st;
+
+        while ((st = br.readLine()) != null) {
+            full += st;
+        }
+
+        String temp[] = full.split(",");
+        int finArray[] = new int[temp.length];
+        for (int i = 0; i < temp.length; i++){
+            finArray[i] = Integer.parseInt(temp[i]);
+        }
+
+        return finArray;
+    }
+
     public static int countChar(String str, char c) {
         int count = 0;
 
