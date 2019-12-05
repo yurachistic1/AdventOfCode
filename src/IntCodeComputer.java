@@ -10,6 +10,18 @@ public class IntCodeComputer {
     int output = 0;
     int input;
 
+    public void setInput(int input) {
+        this.input = input;
+    }
+
+    public int[] getProgram() {
+        return program;
+    }
+
+    public void changeProgram(int memAddr, int value){
+        program[memAddr] = value;
+    }
+
     public IntCodeComputer(String source, int input) {
         try {
             program = UtilityFunctions.convertInputToIntArray(source);
@@ -17,7 +29,12 @@ public class IntCodeComputer {
         } catch (Exception ignored) {}
     }
 
-    public void ExecuteProgram(){
+    public void refreshProgram(String source){
+        try {
+            program = UtilityFunctions.convertInputToIntArray(source);
+        } catch (Exception ignored){}
+    }
+    public void executeProgram(){
         for (pointer = 0; pointer < program.length;){
             if(!executeInstruction(decodeInstruction(program[pointer]))){
                 break;
@@ -70,7 +87,7 @@ public class IntCodeComputer {
     }
 
     public int[] decodeInstruction(int instruction) {
-        int decodedInstruction[] = new int[4];
+        int[] decodedInstruction = new int[4];
         int insLen = 0;
         while (instruction > 0) {
             decodedInstruction[insLen] = insLen == 0 ? instruction % 100 : instruction % 10;
