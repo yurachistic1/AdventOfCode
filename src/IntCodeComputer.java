@@ -22,6 +22,12 @@ public class IntCodeComputer {
         program[memAddr] = value;
     }
 
+    public void refreshProgram(String source){
+        try {
+            program = UtilityFunctions.convertInputToIntArray(source);
+        } catch (Exception ignored){}
+    }
+
     public IntCodeComputer(String source, int input) {
         try {
             program = UtilityFunctions.convertInputToIntArray(source);
@@ -29,11 +35,6 @@ public class IntCodeComputer {
         } catch (Exception ignored) {}
     }
 
-    public void refreshProgram(String source){
-        try {
-            program = UtilityFunctions.convertInputToIntArray(source);
-        } catch (Exception ignored){}
-    }
     public void executeProgram(){
         for (pointer = 0; pointer < program.length;){
             if(!executeInstruction(decodeInstruction(program[pointer]))){
@@ -45,9 +46,11 @@ public class IntCodeComputer {
     public boolean executeInstruction(@NotNull int[] decodedInstruction){
         int opcode = decodedInstruction[0];
         if (opcode == 99){ return false; }
+
         int par1MemAddr = decodedInstruction[1] == 0 ? program[pointer + 1] : pointer + 1;
         int par2MemAddr = decodedInstruction[2] == 0 ? program[pointer + 2] : pointer + 2;
         int writeAddr = program[pointer + 3];
+
         switch (opcode){
             case 1:
                 program[writeAddr] = program[par1MemAddr] + program[par2MemAddr];

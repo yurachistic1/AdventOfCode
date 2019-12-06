@@ -25,5 +25,9 @@ public class Main {
         //Day5.Day5a();
 
         //Day5.Day5b();
+
+        //Day6.day6a();
+
+        //Day6.day6b();
     }
 }
