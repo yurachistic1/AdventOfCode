@@ -16,7 +16,7 @@ public class Day2 {
         IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day2.txt", 0);
         for(int k = 0; k < 100; k++){
             for (int j = 0; j < 100; j++){
-                intCodeComputer.refreshProgram("./inputs/Day2.txt");
+                intCodeComputer.refreshProgram();
                 intCodeComputer.changeProgram(1, k);
                 intCodeComputer.changeProgram(2, j);
                 intCodeComputer.executeProgram();

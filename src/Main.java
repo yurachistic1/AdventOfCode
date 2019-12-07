@@ -29,5 +29,9 @@ public class Main {
         //Day6.day6a();
 
         //Day6.day6b();
+
+        //Day7.day7a();
+
+        Day7.day7b();
     }
 }

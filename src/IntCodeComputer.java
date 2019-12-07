@@ -6,12 +6,28 @@ import java.util.Arrays;
 public class IntCodeComputer {
 
     int[] program;
+    int[] ogCopy;
     int pointer;
     int output = 0;
     int input;
+    int phaseSetting;
+    boolean usePhaseToInput;
+    boolean outputMode;
+    boolean terminated;
 
     public void setInput(int input) {
         this.input = input;
+    }
+
+    public void setOutputMode(boolean mode){ this.outputMode = mode; }
+
+    public boolean isTerminated(){ return terminated; }
+
+    public int getOutput(){ return output; }
+
+    public void setPhaseSetting(int phaseSetting){
+        this.phaseSetting = phaseSetting;
+        usePhaseToInput = true;
     }
 
     public int[] getProgram() {
@@ -22,21 +38,23 @@ public class IntCodeComputer {
         program[memAddr] = value;
     }
 
-    public void refreshProgram(String source){
-        try {
-            program = UtilityFunctions.convertInputToIntArray(source);
-        } catch (Exception ignored){}
+    public void refreshProgram(){
+        program = Arrays.copyOf(ogCopy, program.length);
+        pointer = 0;
+        terminated = false;
     }
 
     public IntCodeComputer(String source, int input) {
         try {
             program = UtilityFunctions.convertInputToIntArray(source);
+            ogCopy = UtilityFunctions.convertInputToIntArray(source);
+            pointer = 0;
             this.input = input;
         } catch (Exception ignored) {}
     }
 
     public void executeProgram(){
-        for (pointer = 0; pointer < program.length;){
+        for (; pointer < program.length;){
             if(!executeInstruction(decodeInstruction(program[pointer]))){
                 break;
             }
@@ -45,11 +63,15 @@ public class IntCodeComputer {
 
     public boolean executeInstruction(@NotNull int[] decodedInstruction){
         int opcode = decodedInstruction[0];
-        if (opcode == 99){ return false; }
+        if (opcode == 99){
+            terminated = true;
+            return false;
+        }
 
         int par1MemAddr = decodedInstruction[1] == 0 ? program[pointer + 1] : pointer + 1;
         int par2MemAddr = decodedInstruction[2] == 0 ? program[pointer + 2] : pointer + 2;
-        int writeAddr = program[pointer + 3];
+        int writeAddr = 0;
+        if(opcode != 4){ writeAddr = program[pointer + 3];}
 
         switch (opcode){
             case 1:
@@ -61,13 +83,15 @@ public class IntCodeComputer {
                 pointer += 4;
                 break;
             case 3:
-                program[par1MemAddr] = input;
+                program[par1MemAddr] = usePhaseToInput ? phaseSetting : input;
+                if (usePhaseToInput){usePhaseToInput = false;}
                 pointer += 2;
                 break;
             case 4:
                 output = program[par1MemAddr];
-                System.out.println(output);
+                //System.out.println(output);
                 pointer += 2;
+                if(outputMode) { return false; }
                 break;
             case 5:
                 pointer = program[par1MemAddr] != 0 ? program[par2MemAddr] : pointer + 3;
