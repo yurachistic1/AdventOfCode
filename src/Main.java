@@ -32,6 +32,10 @@ public class Main {
 
         //Day7.day7a();
 
-        Day7.day7b();
+        //Day7.day7b();
+
+        //Day8.day8a();
+
+        Day8.day8b();
     }
 }
