@@ -72,11 +72,11 @@ public class Day7 {
 //        thrusterD.setPhaseSetting(6);
 //        thrusterE.setPhaseSetting(5);
 
-        thrusterA.setOutputMode(true);
-        thrusterB.setOutputMode(true);
-        thrusterC.setOutputMode(true);
-        thrusterD.setOutputMode(true);
-        thrusterE.setOutputMode(true);
+        thrusterA.setInterruptAfterOutput(true);
+        thrusterB.setInterruptAfterOutput(true);
+        thrusterC.setInterruptAfterOutput(true);
+        thrusterD.setInterruptAfterOutput(true);
+        thrusterE.setInterruptAfterOutput(true);
 
         int max = 0;
 //
@@ -124,7 +124,7 @@ public class Day7 {
                                 continue;
                             }
 
-                            System.out.println(String.format("%d %d %d %d %d", i, j, k, l, m));
+                            //System.out.println(String.format("%d %d %d %d %d", i, j, k, l, m));
                             thrusterA.refreshProgram();
                             thrusterB.refreshProgram();
                             thrusterC.refreshProgram();
@@ -166,7 +166,7 @@ public class Day7 {
                                 thrusterE.executeProgram();
                                 outputE = thrusterE.getOutput();
                             }
-                            System.out.println(outputE);
+                            //System.out.println(outputE);
                             if(outputE > max){
                                 max = outputE;
                             }

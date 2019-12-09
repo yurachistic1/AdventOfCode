@@ -36,6 +36,6 @@ public class Main {
 
         //Day8.day8a();
 
-        Day8.day8b();
+        //Day8.day8b();
     }
 }

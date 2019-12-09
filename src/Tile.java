@@ -10,7 +10,7 @@ public class Tile extends JPanel {
     public Tile(char[][] image){
         this.image = image;
 
-        Dimension dimension = new Dimension(25 * 30, 6 * 30);
+        Dimension dimension = new Dimension(image[0].length * dimX, image.length * dimY);
 
         setPreferredSize(dimension);
     }

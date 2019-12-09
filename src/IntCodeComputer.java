@@ -1,6 +1,5 @@
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class IntCodeComputer {
@@ -12,14 +11,14 @@ public class IntCodeComputer {
     int input;
     int phaseSetting;
     boolean usePhaseToInput;
-    boolean outputMode;
+    boolean interruptAfterOutput;
     boolean terminated;
 
     public void setInput(int input) {
         this.input = input;
     }
 
-    public void setOutputMode(boolean mode){ this.outputMode = mode; }
+    public void setInterruptAfterOutput(boolean mode){ this.interruptAfterOutput = mode; }
 
     public boolean isTerminated(){ return terminated; }
 
@@ -68,10 +67,9 @@ public class IntCodeComputer {
             return false;
         }
 
-        int par1MemAddr = decodedInstruction[1] == 0 ? program[pointer + 1] : pointer + 1;
-        int par2MemAddr = decodedInstruction[2] == 0 ? program[pointer + 2] : pointer + 2;
-        int writeAddr = 0;
-        if(opcode != 4){ writeAddr = program[pointer + 3];}
+        int par1MemAddr = (decodedInstruction[1] == 0 && pointer + 1 < program.length) ? program[pointer + 1] : pointer + 1;
+        int par2MemAddr = (decodedInstruction[2] == 0 && pointer + 2 < program.length) ? program[pointer + 2] : pointer + 2;
+        int writeAddr = (pointer + 3 < program.length) ? program[pointer + 3] : 0;
 
         switch (opcode){
             case 1:
@@ -89,9 +87,8 @@ public class IntCodeComputer {
                 break;
             case 4:
                 output = program[par1MemAddr];
-                //System.out.println(output);
                 pointer += 2;
-                if(outputMode) { return false; }
+                if(interruptAfterOutput) { return false; }
                 break;
             case 5:
                 pointer = program[par1MemAddr] != 0 ? program[par2MemAddr] : pointer + 3;

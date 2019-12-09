@@ -49,24 +49,28 @@ public class Day8 {
         char[][] layers = new char[arr.size()][dimX];
         char[][] image = new char[dimY][dimX];
 
-        for (int i = 0; i < arr.size(); i++) {
-            layers[i] = arr.get(i).toCharArray();
-        }
-
-        for (int i = 0; i < dimY; i++) {
-            for (int j = 0; j < dimX; j++)
-                image[i][j] = layers[i][j];
-        }
         JFrame jFrame = new JFrame();
 
         Tile tiles = new Tile(image);
         jFrame.getContentPane().add(tiles);
 
-        jFrame.setResizable(true);
+        jFrame.setResizable(false);
         jFrame.setSize(dimX * 30, dimY * 30);
-        jFrame.setLocation(700, 400);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.setVisible(true);
+
+        for (int i = 0; i < arr.size(); i++) {
+            layers[i] = arr.get(i).toCharArray();
+        }
+
+        for (int i = 0; i < dimY; i++) {
+            for (int j = 0; j < dimX; j++) {
+                image[i][j] = layers[i][j];
+                tiles.updateImage(image);
+                jFrame.pack();
+                TimeUnit.MICROSECONDS.sleep(10);
+            }
+        }
 
         for (int i = 0; i < layers.length - dimY; i++) {
             for (int j = 0; j < dimX; j++) {
@@ -74,7 +78,7 @@ public class Day8 {
                     image[i % dimY][j] = layers[i + dimY][j];
                     tiles.updateImage(image);
                     jFrame.pack();
-                    TimeUnit.MICROSECONDS.sleep(1);
+                    TimeUnit.MICROSECONDS.sleep(10);
                 }
             }
         }
