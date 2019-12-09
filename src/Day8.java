@@ -1,9 +1,11 @@
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 public class Day8 {
 
-    public static void day8a() throws Exception{
+    public static void day8a() throws Exception {
         String input = UtilityFunctions.convertInputToString(
                 "./inputs/Day8.txt");
 
@@ -17,12 +19,12 @@ public class Day8 {
         int totalOnLayerOne = 0;
         int totalOnLLayerTwo = 0;
 
-        for(int i = 1; i < arr.size() + 1; i++){
+        for (int i = 1; i < arr.size() + 1; i++) {
             totalOnLayerZero = totalOnLayerZero + arr.get(i - 1).length() - arr.get(i - 1).replace("0", "").length();
             totalOnLayerOne = totalOnLayerOne + arr.get(i - 1).length() - arr.get(i - 1).replace("1", "").length();
             totalOnLLayerTwo = totalOnLLayerTwo + arr.get(i - 1).length() - arr.get(i - 1).replace("2", "").length();
-            if (i % 6 == 0){
-                if (totalOnLayerZero < min){
+            if (i % 6 == 0) {
+                if (totalOnLayerZero < min) {
                     min = totalOnLayerZero;
                     one = totalOnLayerOne;
                     two = totalOnLLayerTwo;
@@ -36,48 +38,45 @@ public class Day8 {
         System.out.println(one * two);
     }
 
-    public static void day8b() throws Exception{
+    public static void day8b() throws Exception {
         int dimX = 25;
         int dimY = 6;
         String input = UtilityFunctions.convertInputToString(
                 "./inputs/Day8.txt");
 
-        ArrayList<String> arr = new ArrayList<>(Arrays.asList(input.split("(?<=\\G.{25})")));
+        ArrayList<String> arr = new ArrayList<>(Arrays.asList(input.split(String.format("(?<=\\G.{%d})", dimX))));
 
         char[][] layers = new char[arr.size()][dimX];
+        char[][] image = new char[dimY][dimX];
 
-        for (int i = 0; i < arr.size(); i++){
+        for (int i = 0; i < arr.size(); i++) {
             layers[i] = arr.get(i).toCharArray();
         }
 
-        char[][] image = new char[dimY][dimX];
-        char[][] restOfTheLayers = new char[layers.length - image.length][dimX];
-
-        for (int i = 0; i < dimY; i++){
-            image[i] = layers[i];
+        for (int i = 0; i < dimY; i++) {
+            for (int j = 0; j < dimX; j++)
+                image[i][j] = layers[i][j];
         }
+        JFrame jFrame = new JFrame();
 
-        for (int i = dimY; i < layers.length; i++){
-            restOfTheLayers[i - dimY] = layers[i];
-        }
+        Tile tiles = new Tile(image);
+        jFrame.getContentPane().add(tiles);
 
-        for (int i = 0; i < restOfTheLayers.length; i++){
-            for (int j = 0; j < dimX; j++){
-                if (image[i % dimY][j] == '2'){
-                    image[i % dimY][j] = restOfTheLayers[i][j];
+        jFrame.setResizable(true);
+        jFrame.setSize(dimX * 30, dimY * 30);
+        jFrame.setLocation(700, 400);
+        jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.setVisible(true);
+
+        for (int i = 0; i < layers.length - dimY; i++) {
+            for (int j = 0; j < dimX; j++) {
+                if (image[i % dimY][j] == '2') {
+                    image[i % dimY][j] = layers[i + dimY][j];
+                    tiles.updateImage(image);
+                    jFrame.pack();
+                    TimeUnit.MICROSECONDS.sleep(1);
                 }
             }
-        }
-
-        for (char[] arr1 : image){
-            for(char ch : arr1){
-                if(ch == '0'){
-                    System.out.print("  ");
-                } else {
-                    System.out.print("# ");
-                }
-            }
-            System.out.println();
         }
     }
 }
