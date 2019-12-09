@@ -4,14 +4,14 @@ public class Day7 {
 
         IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day7.txt", 0);
 
-        int currentMax = 0;
+        long currentMax = 0;
 
         for (int i = 0; i < 5; i++) {
             intCodeComputer.setInput(0);
             intCodeComputer.setPhaseSetting(i);
             intCodeComputer.executeProgram();
             intCodeComputer.refreshProgram();
-            int output1 = intCodeComputer.getOutput();
+            long output1 = intCodeComputer.getOutput();
             for (int j = 0; j < 5; j++) {
                 if (j == i) {
                     continue;
@@ -20,7 +20,7 @@ public class Day7 {
                 intCodeComputer.setPhaseSetting(j);
                 intCodeComputer.executeProgram();
                 intCodeComputer.refreshProgram();
-                int output2 = intCodeComputer.getOutput();
+                long output2 = intCodeComputer.getOutput();
                 for (int k = 0; k < 5; k++) {
                     if (k == j || k == i) {
                         continue;
@@ -29,7 +29,7 @@ public class Day7 {
                     intCodeComputer.setPhaseSetting(k);
                     intCodeComputer.executeProgram();
                     intCodeComputer.refreshProgram();
-                    int output3 = intCodeComputer.getOutput();
+                    long output3 = intCodeComputer.getOutput();
                     for (int l = 0; l < 5; l++) {
                         if (l == i || l == j || l == k) {
                             continue;
@@ -38,7 +38,7 @@ public class Day7 {
                         intCodeComputer.setPhaseSetting(l);
                         intCodeComputer.executeProgram();
                         intCodeComputer.refreshProgram();
-                        int output4 = intCodeComputer.getOutput();
+                        long output4 = intCodeComputer.getOutput();
                         for (int m = 0; m < 5; m++) {
                             if (m == i || m == j || m == k || m == l) {
                                 continue;
@@ -78,7 +78,7 @@ public class Day7 {
         thrusterD.setInterruptAfterOutput(true);
         thrusterE.setInterruptAfterOutput(true);
 
-        int max = 0;
+        long max = 0;
 //
 //        while(!thrusterE.isTerminated()){
 //            thrusterA.setInput(outputE);
@@ -138,11 +138,11 @@ public class Day7 {
                             thrusterD.setPhaseSetting(l);
                             thrusterE.setPhaseSetting(m);
 
-                            int outputA = 0;
-                            int outputB = 0;
-                            int outputC = 0;
-                            int outputD = 0;
-                            int outputE = 0;
+                            long outputA = 0;
+                            long outputB = 0;
+                            long outputC = 0;
+                            long outputD = 0;
+                            long outputE = 0;
 
                             while(!thrusterE.isTerminated()) {
 

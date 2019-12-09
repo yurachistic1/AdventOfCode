@@ -37,5 +37,9 @@ public class Main {
         //Day8.day8a();
 
         //Day8.day8b();
+
+        //Day9.day9a();
+
+        Day9.day9b();
     }
 }

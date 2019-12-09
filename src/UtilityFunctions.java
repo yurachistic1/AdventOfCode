@@ -38,7 +38,7 @@ public class UtilityFunctions {
         return full;
     }
 
-    public static int[] convertInputToIntArray(String path) throws Exception {
+    public static long[] convertInputToIntArray(String path) throws Exception {
 
         File file = new File(path);
 
@@ -52,9 +52,9 @@ public class UtilityFunctions {
         }
 
         String temp[] = full.split(",");
-        int finArray[] = new int[temp.length];
+        long finArray[] = new long[temp.length];
         for (int i = 0; i < temp.length; i++){
-            finArray[i] = Integer.parseInt(temp[i]);
+            finArray[i] = Long.parseLong(temp[i]);
         }
 
         return finArray;
