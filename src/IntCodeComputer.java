@@ -4,13 +4,11 @@ import java.util.Arrays;
 
 public class IntCodeComputer {
 
-    long[] program;
+    long[] mem;
     long[] ogCopy;
-    long[] memory;
 
     long pointer;
     long relativeBase;
-    long resolvedMemAddress;
 
     long output = 0;
     long input;
@@ -24,131 +22,108 @@ public class IntCodeComputer {
         this.input = input;
     }
 
-    public void setInterruptAfterOutput(boolean mode){ this.interruptAfterOutput = mode; }
+    public void setInterruptAfterOutput(boolean mode) {
+        this.interruptAfterOutput = mode;
+    }
 
-    public boolean isTerminated(){ return terminated; }
+    public boolean isTerminated() {
+        return terminated;
+    }
 
-    public long getOutput(){ return output; }
+    public long getOutput() {
+        return output;
+    }
 
-    public void setPhaseSetting(int phaseSetting){
+    public void setPhaseSetting(int phaseSetting) {
         this.phaseSetting = phaseSetting;
         usePhaseToInput = true;
     }
 
-    public long[] getProgram() {
-        return program;
+    public long[] getMem() {
+        return mem;
     }
 
-    public void changeProgram(int memAddr, int value){
-        program[memAddr] = value;
+    public void changeProgram(int memAddr, int value) {
+        mem[memAddr] = value;
     }
 
-    public void refreshProgram(){
-        program = Arrays.copyOf(ogCopy, program.length);
+    public void refreshProgram() {
+        //mem = Arrays.copyOf(ogCopy, mem.length);
+        System.arraycopy(ogCopy, 0, mem, 0, ogCopy.length);
         pointer = 0;
         terminated = false;
     }
 
     public IntCodeComputer(String source, long input) {
         try {
-            program = UtilityFunctions.convertInputToIntArray(source);
+            //mem = UtilityFunctions.convertInputToIntArray(source);
             ogCopy = UtilityFunctions.convertInputToIntArray(source);
-            memory = new long[program.length * 100];
+            mem = new long[ogCopy.length + ogCopy.length * 100];
+            System.arraycopy(ogCopy, 0, mem, 0, ogCopy.length);
 
             pointer = 0;
             relativeBase = 0;
-            resolvedMemAddress = 0;
 
             this.input = input;
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+        }
     }
 
-    public void executeProgram(){
-        for (; pointer < program.length;){
-            if(!executeInstruction(decodeInstruction((program[(int)pointer])))){
+    public void executeProgram() {
+        for (; pointer < mem.length; ) {
+            if (!executeInstruction(decodeInstruction((mem[(int) pointer])))) {
                 break;
             }
         }
     }
 
-    public boolean executeInstruction(@NotNull long[] decodedInstruction){
+    public boolean executeInstruction(@NotNull long[] decodedInstruction) {
         long opcode = decodedInstruction[0];
-        if (opcode == 99){
+        if (opcode == 99) {
             terminated = true;
             return false;
         }
 
-        boolean par1MemAddrLoc = resolveMemoryAddress(decodedInstruction[1], 1);
-        int par1MemAddr = (int)resolvedMemAddress;
-        //int par1MemAddr = (int)((decodedInstruction[1] == 0 && pointer + 1 < program.length) ? program[(int)pointer + 1] : pointer + 1);
+        int par1MemAddr = resolveMemoryAddress(decodedInstruction[1], 1);
+        int par2MemAddr = resolveMemoryAddress(decodedInstruction[2], 2);
+        int writeAddr = resolveMemoryAddress(decodedInstruction[3], 3);
 
-        boolean par2MemAddrLoc = resolveMemoryAddress(decodedInstruction[2], 2);
-        int par2MemAddr = (int)resolvedMemAddress;
-        //int par2MemAddr = (int)((decodedInstruction[2] == 0 && pointer + 2 < program.length) ? program[(int)pointer + 2] : pointer + 2);
-
-        boolean writeAddrLoc = resolveMemoryAddress(decodedInstruction[3], 3);
-        int writeAddr = (int)resolvedMemAddress;
-        //int writeAddr = (pointer + 3 < program.length) ? (int)program[(int)pointer + 3] : 0;
-
-        long par1MemAddrValue = par1MemAddrLoc ? memory[par1MemAddr] : program[par1MemAddr];
-        long par2MemAddrValue = par2MemAddrLoc ? memory[par2MemAddr] : program[par2MemAddr];
-
-        switch ((int)opcode){
+        switch ((int) opcode) {
             case 1:
-                if (writeAddrLoc){
-                    memory[writeAddr] = par1MemAddrValue + par2MemAddrValue;
-                } else {
-                    program[writeAddr] = par1MemAddrValue + par2MemAddrValue;
-                }
+                mem[writeAddr] = mem[par1MemAddr] + mem[par2MemAddr];
                 pointer += 4;
                 break;
             case 2:
-                if (writeAddrLoc){
-                    memory[writeAddr] = par1MemAddrValue * par2MemAddrValue;
-                } else {
-                    program[writeAddr] = par1MemAddrValue * par2MemAddrValue;
-                }
+                mem[writeAddr] = mem[par1MemAddr] * mem[par2MemAddr];
                 pointer += 4;
                 break;
             case 3:
-                if(par1MemAddrLoc){
-                    memory[par1MemAddr] = usePhaseToInput ? phaseSetting : input;
-                } else {
-                    program[par1MemAddr] = usePhaseToInput ? phaseSetting : input;
-                }
-                if (usePhaseToInput){usePhaseToInput = false;}
+                mem[par1MemAddr] = usePhaseToInput ? phaseSetting : input;
+                if (usePhaseToInput) usePhaseToInput = false;
                 pointer += 2;
                 break;
             case 4:
-                output = par1MemAddrLoc ? memory[par1MemAddr] : program[par1MemAddr];
+                output = mem[par1MemAddr];
                 pointer += 2;
-                if(interruptAfterOutput)  return false;
-                else  System.out.println(output);
+                System.out.println(output);
+                if (interruptAfterOutput) return false;
                 break;
             case 5:
-                pointer = par1MemAddrValue != 0 ? par2MemAddrValue : pointer + 3;
+                pointer = mem[par1MemAddr] != 0 ? mem[par2MemAddr] : pointer + 3;
                 break;
             case 6:
-                pointer = par1MemAddrValue == 0 ? par2MemAddrValue : pointer + 3;
+                pointer = mem[par1MemAddr] == 0 ? mem[par2MemAddr] : pointer + 3;
                 break;
             case 7:
-                if(writeAddrLoc){
-                    memory[writeAddr] = par1MemAddrValue < par2MemAddrValue ? 1 : 0;
-                } else {
-                    program[writeAddr] = par1MemAddrValue < par2MemAddrValue ? 1 : 0;
-                }
+                mem[writeAddr] = mem[par1MemAddr] < mem[par2MemAddr] ? 1 : 0;
                 pointer += 4;
                 break;
             case 8:
-                if(writeAddrLoc){
-                    memory[writeAddr] = par1MemAddrValue == par2MemAddrValue ? 1 : 0;
-                } else {
-                    program[writeAddr] = par1MemAddrValue == par2MemAddrValue ? 1 : 0;
-                }
+                mem[writeAddr] = mem[par1MemAddr] == mem[par2MemAddr] ? 1 : 0;
                 pointer += 4;
                 break;
             case 9:
-                relativeBase += par1MemAddrValue;
+                relativeBase += mem[par1MemAddr];
                 pointer += 2;
                 break;
             default:
@@ -162,46 +137,25 @@ public class IntCodeComputer {
         int insLen = 0;
         while (instruction > 0) {
             decodedInstruction[insLen] = insLen == 0 ? instruction % 100 : instruction % 10;
-            instruction = insLen == 0 ? instruction / 100 : instruction/10;
+            instruction = insLen == 0 ? instruction / 100 : instruction / 10;
             insLen++;
         }
 
         return decodedInstruction;
     }
 
-    public boolean resolveMemoryAddress(long mode, int parNo){
+    public int resolveMemoryAddress(long mode, int parNo) {
         long temp = 0;
-        boolean mem = false;
-        switch ((int)mode){
+        switch ((int) mode) {
             case 0:
-                if (pointer + parNo < program.length){
-                    temp = program[(int)pointer + parNo];
-                } else {
-                    temp = memory[(int)pointer + parNo - program.length];
-                }
-                if (temp > program.length){ mem = true; }
-                else mem = false;
+                temp = this.mem[(int) pointer + parNo];
                 break;
             case 1:
-                if(pointer + parNo < program.length){
-                    temp = pointer + parNo;
-                    mem = false;
-                } else {
-                    temp = pointer + parNo - program.length;
-                    mem = true;
-                }
+                temp = pointer + parNo;
                 break;
             case 2:
-                if (pointer + parNo < program.length){
-                    temp = relativeBase + program[(int)pointer + parNo];
-                } else {
-                    temp = relativeBase + memory[(int)pointer + parNo];
-                }
-                if (temp > program.length){ mem = true; }
-                else mem = false;
+                temp = relativeBase + this.mem[(int) pointer + parNo];
         }
-
-        resolvedMemAddress = temp;
-        return mem;
+        return (int) temp;
     }
 }

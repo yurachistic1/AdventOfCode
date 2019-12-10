@@ -1,6 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-
 public class Day2 {
     public static void Day2a() throws Exception {
         IntCodeComputer intCodeComputer =  new IntCodeComputer("./inputs/Day2.txt", 0);
@@ -8,7 +5,7 @@ public class Day2 {
         intCodeComputer.changeProgram(2,2);
         intCodeComputer.executeProgram();
 
-        System.out.println(intCodeComputer.getProgram()[0]);
+        System.out.println(intCodeComputer.getMem()[0]);
 
     }
 
@@ -21,7 +18,7 @@ public class Day2 {
                 intCodeComputer.changeProgram(2, j);
                 intCodeComputer.executeProgram();
 
-                if (intCodeComputer.getProgram()[0] == 19690720){
+                if (intCodeComputer.getMem()[0] == 19690720){
                     System.out.println(100 * k + j);
                 }
             }
