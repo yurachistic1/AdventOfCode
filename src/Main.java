@@ -38,8 +38,12 @@ public class Main {
 
         //Day8.day8b();
 
-        Day9.day9a();
+        //Day9.day9a();
 
-        Day9.day9b();
+        //Day9.day9b();
+
+        //Day10.day10a();
+
+        //Day10.day10b();
     }
 }
