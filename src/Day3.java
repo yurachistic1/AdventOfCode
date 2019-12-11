@@ -138,11 +138,4 @@ public class Day3 {
 
         return null;
     }
-
-    public static PVector checkIfIntersect(ArrayList<PVector> line1, ArrayList<PVector> line2){
-//        if (line1.get(0).getX() < line2.get(0).getX() &&
-//            line1.get(1).getX() > line2.get(1).getX() &&
-//            line1.get(0).getY() )
-        return null;
-    }
 }

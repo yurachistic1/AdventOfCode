@@ -81,8 +81,8 @@ public class Day10 {
 
             PVector min;
             min = Collections.min(asteroids.get(keySet.get(index)), (t0, t1) -> {
-                Integer a = Math.abs(t0.getY() - 19) + Math.abs(t0.getX() - 27);
-                Integer b = Math.abs(t1.getY() - 19) + Math.abs(t1.getX() - 27);
+                Integer a = (int)(Math.abs(t0.getY() - 19) + Math.abs(t0.getX() - 27));
+                Integer b = (int)(Math.abs(t1.getY() - 19) + Math.abs(t1.getX() - 27));
                 return a.compareTo(b);
             });
             if (count == 199){

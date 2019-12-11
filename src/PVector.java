@@ -32,6 +32,20 @@ public class PVector {
         return this;
     }
 
+    public PVector rotate(double degrees){
+        double theta = Math.toRadians(degrees);
+        double cs = Math.cos(theta);
+        double sn = Math.sin(theta);
+
+        double xCopy = x;
+        double yCopy = y;
+
+        x = (int)(xCopy * cs - yCopy * sn);
+        y = (int)(xCopy * sn + yCopy * cs);
+
+        return this;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

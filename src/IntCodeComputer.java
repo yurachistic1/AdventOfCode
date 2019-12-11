@@ -105,7 +105,7 @@ public class IntCodeComputer {
             case 4:
                 output = mem[par1MemAddr];
                 pointer += 2;
-                System.out.println(output);
+                //System.out.println(output);
                 if (interruptAfterOutput) return false;
                 break;
             case 5:
