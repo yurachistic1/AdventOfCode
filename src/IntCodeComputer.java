@@ -1,5 +1,3 @@
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Arrays;
 
 public class IntCodeComputer {
@@ -77,7 +75,7 @@ public class IntCodeComputer {
         }
     }
 
-    public boolean executeInstruction(@NotNull long[] decodedInstruction) {
+    public boolean executeInstruction(long[] decodedInstruction) {
         long opcode = decodedInstruction[0];
         if (opcode == 99) {
             terminated = true;

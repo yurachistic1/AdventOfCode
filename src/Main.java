@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 public class Main {
 
     public static void main(String args[]) throws  Exception{
+        //Main class to run solutions to all the problems
+
         //Day1.Day1a();
 
         //Day1.Day1b();
