@@ -46,7 +46,6 @@ public class IntCodeComputer {
     }
 
     public void refreshProgram() {
-        //mem = Arrays.copyOf(ogCopy, mem.length);
         System.arraycopy(ogCopy, 0, mem, 0, ogCopy.length);
         pointer = 0;
         terminated = false;
