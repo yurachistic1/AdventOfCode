@@ -53,7 +53,6 @@ public class IntCodeComputer {
 
     public IntCodeComputer(String source, long input) {
         try {
-            //mem = UtilityFunctions.convertInputToIntArray(source);
             ogCopy = UtilityFunctions.convertInputToIntArray(source);
             mem = new long[ogCopy.length + ogCopy.length * 100];
             System.arraycopy(ogCopy, 0, mem, 0, ogCopy.length);
