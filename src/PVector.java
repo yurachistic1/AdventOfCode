@@ -11,10 +11,16 @@ public class PVector {
         this.y = y;
     }
 
-    public  PVector(int x, int y, int z){
+    public  PVector(int x, int y, int z) {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    public PVector(PVector pVector){
+        x = pVector.getX();
+        y = pVector.getY();
+        z = pVector.getZ();
     }
 
     public int getX() {
@@ -67,7 +73,7 @@ public class PVector {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PVector pVector = (PVector) o;
-        return x == pVector.x && (y == pVector.y && z == pVector.y);
+        return x == pVector.x && (y == pVector.y && z == pVector.z);
     }
 
     @Override
