@@ -57,5 +57,7 @@ public class Main {
 
         //new Day12().day12b();
 
+        Day13.day13a();
+
     }
 }

@@ -1,4 +1,6 @@
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 
 public class IntCodeComputer {
 
@@ -15,6 +17,8 @@ public class IntCodeComputer {
     boolean usePhaseToInput;
     boolean interruptAfterOutput;
     boolean terminated;
+
+    OutputStore outputStore;
 
     public void setInput(long input) {
         this.input = input;
@@ -101,7 +105,7 @@ public class IntCodeComputer {
             case 4:
                 output = mem[par1MemAddr];
                 pointer += 2;
-                //System.out.println(output);
+                if (outputStore != null) outputStore.generateMatrix((int)output);
                 if (interruptAfterOutput) return false;
                 break;
             case 5:
@@ -153,5 +157,31 @@ public class IntCodeComputer {
                 temp = relativeBase + this.mem[(int) pointer + parNo];
         }
         return (int) temp;
+    }
+
+    public void addOutputStore(){
+        outputStore = new OutputStore();
+    }
+
+    public class OutputStore{
+
+        public HashMap<PVector, Integer> store = new HashMap<>();
+        private PVector coords = new PVector(0, 0);
+        private int count = 0;
+
+        public HashMap<PVector, Integer> getStore() {
+            return store;
+        }
+
+        public void generateMatrix(int output){
+            if (count % 3 == 0){
+                coords.setX(output);
+            } else if ( count % 3 == 1){
+                coords.setY(output);
+            } else{
+                store.put(new PVector(coords), output);
+            }
+            count++;
+        }
     }
 }
