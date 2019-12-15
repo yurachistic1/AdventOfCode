@@ -13,4 +13,44 @@ public class Day13 {
 
         System.out.println(countBlock);
     }
+
+    public static void day13b() {
+        IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day13.txt", 0);
+        intCodeComputer.addOutputStore();
+        intCodeComputer.setExecutingLazily(true);
+        intCodeComputer.changeProgram(0, 2);
+        intCodeComputer.executeProgram();
+
+        long input = 0;
+        PVector coordsBall = null;
+        PVector coordsBoard = null;
+
+        while(!intCodeComputer.isTerminated()){
+
+            for(PVector coord : intCodeComputer.outputStore.getStore().keySet()){
+                if (intCodeComputer.outputStore.getStore().get(coord) == 3){
+                    coordsBoard = coord;
+                }
+
+                if (intCodeComputer.outputStore.getStore().get(coord) == 4){
+                    coordsBall = coord;
+                }
+            }
+
+            if (coordsBall.getX() < coordsBoard.getX()){
+                input = -1;
+            } else if (coordsBall.getX() > coordsBoard.getX()){
+                input = 1;
+            } else {
+                input = 0;
+            }
+
+            intCodeComputer.setInput(input);
+        }
+
+        System.out.println(intCodeComputer.outputStore.getStore().get(new PVector(-1, 0)));
+    }
+
 }
+
+

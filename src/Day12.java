@@ -61,10 +61,10 @@ public class Day12 {
     public void day12b(){
 
         ArrayList<PVector> positions = new ArrayList<>();
-        positions.add(new PVector(13, -13, -2));
-        positions.add(new PVector(16, 2, -15));
-        positions.add(new PVector(7, -18, -12));
-        positions.add(new PVector(-3, -8, -8));
+        positions.add(new PVector(-1, 0, 2));
+        positions.add(new PVector(2, -10, -7));
+        positions.add(new PVector(4, -8, 8));
+        positions.add(new PVector(3, 5, -1));
 
         ArrayList<PVector> velocities = new ArrayList<>();
         ArrayList<HashMap<PVector, CustomPair>> progressions = new ArrayList<>();
@@ -75,6 +75,8 @@ public class Day12 {
             progressions.get(i).put(new PVector(positions.get(i)), new CustomPair(new PVector(velocities.get(i)), 0));
             periods.add(0);
         }
+
+        //progressions.get(0).put(new PVector(12, -12, -5), new CustomPair(new PVector(-1, 1, -3), 500));
 
         int timestep = 1;
 
@@ -98,7 +100,7 @@ public class Day12 {
             for (int i = 0; i < positions.size(); i++) {
                 positions.get(i).add(velocities.get(i));
                 if(progressions.get(i).containsKey(positions.get(i)) && periods.get(i) == 0){
-                    if (progressions.get(i).get(positions.get(i)).getKey() == velocities.get(i)){
+                    if (progressions.get(i).get(positions.get(i)).getKey().equals(velocities.get(i))){
                         periods.set(i, timestep - progressions.get(i).get(positions.get(i)).getTimestep());
                     }
                 } else {
@@ -107,8 +109,8 @@ public class Day12 {
 
             }
             timestep++;
-            System.out.println(timestep);
-            System.out.println(periods);
+//            System.out.println(timestep);
+//            System.out.println(periods);
         }
 
         System.out.println(periods);

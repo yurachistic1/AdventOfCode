@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class IntCodeComputer {
@@ -17,11 +15,17 @@ public class IntCodeComputer {
     boolean usePhaseToInput;
     boolean interruptAfterOutput;
     boolean terminated;
+    boolean waitingForInput;
+    boolean executingLazily;
 
     OutputStore outputStore;
 
     public void setInput(long input) {
         this.input = input;
+        if (executingLazily){
+            waitingForInput = false;
+            executeProgram();
+        }
     }
 
     public void setInterruptAfterOutput(boolean mode) {
@@ -39,6 +43,22 @@ public class IntCodeComputer {
     public void setPhaseSetting(int phaseSetting) {
         this.phaseSetting = phaseSetting;
         usePhaseToInput = true;
+    }
+
+    public boolean isWaitingForInput() {
+        return waitingForInput;
+    }
+
+    public void setWaitingForInput(boolean waitingForInput) {
+        this.waitingForInput = waitingForInput;
+    }
+
+    public boolean isExecutingLazily() {
+        return executingLazily;
+    }
+
+    public void setExecutingLazily(boolean executingLazily) {
+        this.executingLazily = executingLazily;
     }
 
     public long[] getMem() {
@@ -98,9 +118,11 @@ public class IntCodeComputer {
                 pointer += 4;
                 break;
             case 3:
+                if (executingLazily && waitingForInput){return false;}
                 mem[par1MemAddr] = usePhaseToInput ? phaseSetting : input;
                 if (usePhaseToInput) usePhaseToInput = false;
                 pointer += 2;
+                waitingForInput = true;
                 break;
             case 4:
                 output = mem[par1MemAddr];
