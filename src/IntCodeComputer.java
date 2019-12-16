@@ -45,18 +45,6 @@ public class IntCodeComputer {
         usePhaseToInput = true;
     }
 
-    public boolean isWaitingForInput() {
-        return waitingForInput;
-    }
-
-    public void setWaitingForInput(boolean waitingForInput) {
-        this.waitingForInput = waitingForInput;
-    }
-
-    public boolean isExecutingLazily() {
-        return executingLazily;
-    }
-
     public void setExecutingLazily(boolean executingLazily) {
         this.executingLazily = executingLazily;
     }
@@ -72,7 +60,13 @@ public class IntCodeComputer {
     public void refreshProgram() {
         System.arraycopy(ogCopy, 0, mem, 0, ogCopy.length);
         pointer = 0;
+        input = 0;
+        output = 0;
         terminated = false;
+    }
+
+    public void addOutputStore(){
+        outputStore = new OutputStore();
     }
 
     public IntCodeComputer(String source, long input) {
@@ -180,30 +174,27 @@ public class IntCodeComputer {
         }
         return (int) temp;
     }
+}
 
-    public void addOutputStore(){
-        outputStore = new OutputStore();
+class OutputStore{
+
+    public HashMap<PVector, Integer> store = new HashMap<>();
+    private PVector coords = new PVector(0, 0);
+    private int count = 0;
+
+    public HashMap<PVector, Integer> getStore() {
+        return store;
     }
 
-    public class OutputStore{
-
-        public HashMap<PVector, Integer> store = new HashMap<>();
-        private PVector coords = new PVector(0, 0);
-        private int count = 0;
-
-        public HashMap<PVector, Integer> getStore() {
-            return store;
+    public void generateMatrix(int output){
+        if (count % 3 == 0){
+            coords.setX(output);
+        } else if ( count % 3 == 1){
+            coords.setY(output);
+        } else{
+            store.put(new PVector(coords), output);
         }
-
-        public void generateMatrix(int output){
-            if (count % 3 == 0){
-                coords.setX(output);
-            } else if ( count % 3 == 1){
-                coords.setY(output);
-            } else{
-                store.put(new PVector(coords), output);
-            }
-            count++;
-        }
+        count++;
     }
 }
+
