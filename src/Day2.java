@@ -1,5 +1,10 @@
 public class Day2 {
-    public static void Day2a() throws Exception {
+
+    public static void main(String[] args) throws Exception{
+        day2a();
+        day2b();
+    }
+    public static void day2a() throws Exception {
         IntCodeComputer intCodeComputer =  new IntCodeComputer("./inputs/Day2.txt", 0);
         intCodeComputer.changeProgram(1, 12);
         intCodeComputer.changeProgram(2,2);
@@ -9,7 +14,7 @@ public class Day2 {
 
     }
 
-    public static void Day2b() throws Exception{
+    public static void day2b() throws Exception{
         IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day2.txt", 0);
         for(int k = 0; k < 100; k++){
             for (int j = 0; j < 100; j++){
@@ -23,9 +28,6 @@ public class Day2 {
                 }
             }
         }
-
-        //code goes here
-
     }
 
 

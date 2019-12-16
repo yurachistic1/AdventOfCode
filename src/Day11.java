@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.util.DoubleSummaryStatistics;
 import java.util.HashMap;
 
@@ -106,5 +107,35 @@ public class Day11 {
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jFrame.pack();
         jFrame.setVisible(true);
+    }
+}
+
+class TileForDay11 extends JPanel {
+
+    HashMap<PVector, Integer> coords;
+
+    public TileForDay11(HashMap<PVector, Integer> coords){
+        this.coords = coords;
+
+        Dimension dimension = new Dimension(800, 120);
+
+        setPreferredSize(dimension);
+
+        repaint();
+    }
+
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+
+        for (PVector pVector : coords.keySet()){
+            if (coords.get(pVector) == 0){
+                g.setColor(Color.BLACK);
+            } else {
+                g.setColor(Color.WHITE);
+            }
+            g.fillRect((pVector.getX() - 1) * 20, Math.abs(pVector.getY()) * 20, 20, 20);
+        }
     }
 }

@@ -1,141 +1,83 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
+import javax.crypto.spec.PSource;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Day3 {
 
-    public static void Day3a() throws Exception {
-        ArrayList<String> changes = UtilityFunctions.convertInputToArrayListString(
-                "./inputs/Day3.txt");
-        String wire1[] = changes.get(0).split(",");
-        String wire2[] = changes.get(1).split(",");
+    public static final HashMap<String, Integer> changeX = new HashMap<>() {{
+        put("U", 0);
+        put("D", 0);
+        put("L", -1);
+        put("R", 1);
+    }};
 
-        PVector coordsOfW1 = new PVector(0, 0);
-        PVector coordsOfW2 = new PVector(0 , 0);
+    public static final HashMap<String, Integer> changeY = new HashMap<>() {{
+        put("U", 1);
+        put("D", -1);
+        put("L", 0);
+        put("R", 0);
+    }};
 
-        HashMap<PVector, PVector> map = new HashMap<>();
-        HashMap<PVector, PVector> map2 = new HashMap<>();
-
-        int mapOffset = 1;
-        int map2Offset = 1;
-
-        int minDistance = Integer.MAX_VALUE;
-
-        for (int i = 0; i < wire1.length; i++){
-            mapOffset--;
-            PVector start = new PVector(coordsOfW1.getX(), coordsOfW1.getY());
-            PVector change = stringToPoint(wire1[i]);
-            coordsOfW1.add(change);
-            int changeCoeff = 0;
-            int limit = 0;
-            boolean axis = false;
-            if(change.getX() == 0){
-                limit = coordsOfW1.getY();
-                changeCoeff = change.getY() / Math.abs(change.getY());
-                axis = false;
-            } else {
-                limit = coordsOfW1.getX();
-                changeCoeff = change.getX() / Math.abs(change.getX());
-                axis = true;
-            }
-
-            if(changeCoeff > 0) {
-                for (int j = axis ? start.getX() : start.getY(); j <= limit; j += changeCoeff) {
-                    PVector pointOnLine = axis ? new PVector(j, start.getY()) : new PVector(start.getX(), j);
-                    if (map.containsKey(pointOnLine)){
-                        mapOffset++;
-                    } else {
-                        map.put(pointOnLine, new PVector(map.size(), mapOffset));
-                    }
-                }
-            } else {
-                for (int j = axis ? start.getX() : start.getY(); j >= limit; j += changeCoeff) {
-                    PVector pointOnLine = axis ? new PVector(j, start.getY()) : new PVector(start.getX(), j);
-                    if (map.containsKey(pointOnLine)) {
-                        mapOffset++;
-                    } else {
-                        map.put(pointOnLine, new PVector(map.size(), mapOffset));
-                    }
-                }
-            }
-        }
-
-        for (int i = 0; i < wire2.length; i++){
-            map2Offset--;
-            PVector start = new PVector(coordsOfW2.getX(), coordsOfW2.getY());
-            PVector change = stringToPoint(wire2[i]);
-            coordsOfW2.add(change);
-            int changeCoeff = 0;
-            int limit = 0;
-            boolean axis = false;
-            if(change.getX() == 0){
-                limit = coordsOfW2.getY();
-                changeCoeff = change.getY() / Math.abs(change.getY());
-                axis = false;
-            } else {
-                limit = coordsOfW2.getX();
-                changeCoeff = change.getX() / Math.abs(change.getX());
-                axis = true;
-            }
-
-            if(changeCoeff > 0) {
-                for (int j = axis ? start.getX() : start.getY(); j <= limit; j += changeCoeff) {
-                    PVector pointOnLine = axis ? new PVector(j, start.getY()) : new PVector(start.getX(), j);
-                    if (map2.containsKey(pointOnLine)) {
-                        map2Offset++;
-                    } else {
-                        map2.put(pointOnLine, new PVector(map2.size(), map2Offset));
-                    }
-                    if (map.containsKey(pointOnLine)) {
-                        int distance = map.get(pointOnLine).getX() + map2.get(pointOnLine).getX()
-                                     + map.get(pointOnLine).getY() + map2.get(pointOnLine).getY();
-                        if (distance != 0 && distance < minDistance) {
-                            minDistance = distance;
-                        }
-                    }
-                }
-            } else {
-                for (int j = axis ? start.getX() : start.getY(); j >= limit; j += changeCoeff) {
-                    PVector pointOnLine = axis ? new PVector(j, start.getY()) : new PVector(start.getX(), j);
-                    if (map2.containsKey(pointOnLine)){
-                        map2Offset++;
-                    } else {
-                        map2.put(pointOnLine, new PVector(map2.size(), map2Offset));
-                    }
-                    if (map.containsKey(pointOnLine)) {
-                        int distance = map.get(pointOnLine).getX() + map2.get(pointOnLine).getX()
-                                     + map.get(pointOnLine).getY() + map2.get(pointOnLine).getY();
-                        if (distance != 0 && distance + map2Offset < minDistance) {
-                            minDistance = distance;
-                        }
-                    }
-                }
-            }
-
-        }
-
-        System.out.println(minDistance);
-//        System.out.println(map2Offset - wire2.length + 1);
-//        System.out.println(mapOffset - wire1.length + 1);
-
+    public static void main(String[] args) throws Exception {
+        day3();
     }
 
-    public static void Day3b() throws Exception {
-        ArrayList<String> changes = UtilityFunctions.convertInputToArrayListString(
-                "./inputs/Day3.txt");
-    }
+    public static void day3() throws Exception {
 
-    public static PVector stringToPoint(String string){
-        if (string.charAt(0) == 'R'){
-            return new PVector(Integer.parseInt(string.substring(1)), 0);
-        } else if(string.charAt(0) == 'L'){
-            return new PVector(-Integer.parseInt(string.substring(1)), 0);
-        } else if(string.charAt(0) == 'D'){
-            return new PVector(0, -Integer.parseInt(string.substring(1)));
-        } else if(string.charAt(0) == 'U'){
-            return new PVector( 0,Integer.parseInt(string.substring(1)));
+        ArrayList<String> input = UtilityFunctions.convertInputToArrayListString("./inputs/Day3.txt");
+        ArrayList<String> wire1 = new ArrayList<>(Arrays.asList(input.get(0).split(",")));
+        ArrayList<String> wire2 = new ArrayList<>(Arrays.asList(input.get(1).split(",")));
+
+        HashMap<PVector, Integer> wire1Coords = traceWire(wire1);
+        HashMap<PVector, Integer> wire2Coords = traceWire(wire2);
+        ArrayList<PVector> intersection = new ArrayList<>();
+
+        for (PVector coord : wire1Coords.keySet()){
+            if (wire2Coords.containsKey(coord)){
+                intersection.add(coord);
+            }
         }
+        PVector closest = intersection
+                .stream()
+                .min((vec1, vec2) -> Integer.compare(manhattanDistance(vec1), manhattanDistance(vec2)))
+                .get();
 
-        return null;
+        PVector leastSteps = intersection
+                .stream()
+                .min((vec1, vec2) -> Integer.compare(wire1Coords.get(vec1) + wire2Coords.get(vec1),
+                                                     wire1Coords.get(vec2) + wire2Coords.get(vec2)))
+                .get();
+
+        System.out.printf("Part 1: %d\n", manhattanDistance(closest));
+        System.out.printf("Part 2: %d\n", wire1Coords.get(leastSteps) + wire2Coords.get(leastSteps));
     }
+
+    public static int manhattanDistance(PVector pVector) {
+        return Math.abs(pVector.getX()) + Math.abs(pVector.getY());
+    }
+
+    public static HashMap<PVector, Integer> traceWire(ArrayList<String> wire){
+        HashMap<PVector, Integer> wireCoords = new HashMap<>();
+        PVector last = new PVector(0, 0);
+        int x = 0;
+        int y = 0;
+        String dir;
+        int limit;
+        int count = 1;
+
+        for (int i = 0; i < wire.size(); i++) {
+            dir = wire.get(i).substring(0, 1);
+            limit = Integer.parseInt(wire.get(i).substring(1));
+            for (int j = 0; j < limit; j++) {
+                x = last.getX() + changeX.get(dir);
+                y = last.getY() + changeY.get(dir);
+                PVector coord = new PVector(x, y);
+                if (!wireCoords.containsKey(coord)) wireCoords.put(coord, count);
+                last = coord;
+                count++;
+            }
+        }
+        return wireCoords;
+    }
+
 }

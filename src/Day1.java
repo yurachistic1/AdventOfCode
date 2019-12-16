@@ -2,7 +2,12 @@ import java.util.ArrayList;
 
 public class Day1 {
 
-    public static void Day1a() throws Exception {
+    public static void main(String[] args) throws Exception{
+        day1a();
+        day1b();
+    }
+
+    public static void day1a() throws Exception {
         ArrayList<String> changes = UtilityFunctions.convertInputToArrayListString(
                 "./inputs/Day1.txt");
         int sum = 0;
@@ -14,17 +19,9 @@ public class Day1 {
         System.out.println(sum);
     }
 
-    public static void Day1b() throws Exception{
+    public static void day1b() throws Exception{
         ArrayList<String> changes = UtilityFunctions.convertInputToArrayListString(
                 "./inputs/Day1.txt");
-        int test = 1969;
-        int sum = 0;
-        while(test > 5){
-            System.out.println(test);
-            test = test/3 - 2;
-            sum += test;
-        }
-        System.out.println(sum);
 
         int bigSum = 0;
         int smallSum;
@@ -37,7 +34,6 @@ public class Day1 {
                 currentMod = currentMod/3 - 2;
                 smallSum += currentMod;
             }
-            System.out.println(smallSum);
             bigSum += smallSum;
         }
 

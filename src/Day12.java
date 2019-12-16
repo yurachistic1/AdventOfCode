@@ -1,155 +1,127 @@
+public class Day12{
+}
 
-
+/*
+import static java.util.stream.Collectors.toList;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Currency;
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.List;
 
 public class Day12 {
 
-    public static void day12a() {
-        int limit = 1000;
+    public static void main(String[] args) {
+        List<Coordinate> xAxis = createAxis(13, 16, 7, -3);
+        List<Coordinate> yAxis = createAxis(-13, 2, -18, -8);
+        List<Coordinate> zAxis = createAxis(-2,-15,-12,-8);
 
-        ArrayList<PVector> positions = new ArrayList<>();
-        positions.add(new PVector(13, -13, -2));
-        positions.add(new PVector(16, 2, -15));
-        positions.add(new PVector(7, -18, -12));
-        positions.add(new PVector(-3, -8, -8));
-
-        ArrayList<PVector> velocities = new ArrayList<>();
-        for (int i = 0; i < positions.size(); i++) velocities.add(new PVector(0, 0, 0));
-
-        for(int timestep = 1; timestep <= limit; timestep++) {
-            for (int i = 0; i < positions.size(); i++) {
-                for (int j = 0; j < positions.size(); j++) {
-                    if (j == i) continue;
-                    int velChangeX = 0;
-                    int velChangeY = 0;
-                    int velChangeZ = 0;
-                    velChangeX = positions.get(i).getX() < positions.get(j).getX() ? 1 : -1;
-                    if (positions.get(i).getX() == positions.get(j).getX()) velChangeX = 0;
-                    velChangeY = positions.get(i).getY() < positions.get(j).getY() ? 1 : -1;
-                    if(positions.get(i).getY() == positions.get(j).getY()) velChangeY = 0;
-                    velChangeZ = positions.get(i).getZ() < positions.get(j).getZ() ? 1 : -1;
-                    if (positions.get(i).getZ() == positions.get(j).getZ()) velChangeZ = 0;
-                    velocities.get(i).add(new PVector(velChangeX, velChangeY, velChangeZ));
-                }
-            }
-            //System.out.printf("After step %d:\n", timestep);
-            for (int i = 0; i < positions.size(); i++) {
-                positions.get(i).add(velocities.get(i));
-//                System.out.print(positions.get(i) + " " + velocities.get(i));
-//                System.out.println();
-            }
-        }
-
-        int totalEnergy = 0;
-        for (int i = 0; i < positions.size(); i++){
-            int a = Math.abs(positions.get(i).getX()) +
-                    Math.abs(positions.get(i).getY()) +
-                    Math.abs(positions.get(i).getZ());
-
-            int b = Math.abs(velocities.get(i).getX()) +
-                    Math.abs(velocities.get(i).getY()) +
-                    Math.abs(velocities.get(i).getZ());
-
-            totalEnergy += a * b;
-        }
-        System.out.printf("Energy after step %d: %d", limit, totalEnergy);
+        calculateEnergyOfSystem(xAxis, yAxis, zAxis);
+        calculateStepsForCycle(xAxis, yAxis, zAxis);
     }
 
-    public void day12b(){
-
-        ArrayList<PVector> positions = new ArrayList<>();
-        positions.add(new PVector(-1, 0, 2));
-        positions.add(new PVector(2, -10, -7));
-        positions.add(new PVector(4, -8, 8));
-        positions.add(new PVector(3, 5, -1));
-
-        ArrayList<PVector> velocities = new ArrayList<>();
-        ArrayList<HashMap<PVector, CustomPair>> progressions = new ArrayList<>();
-        ArrayList<Integer> periods = new ArrayList<>();
-        for (int i = 0; i < positions.size(); i++){
-            velocities.add(new PVector(0, 0, 0));
-            progressions.add(new HashMap<PVector, CustomPair>());
-            progressions.get(i).put(new PVector(positions.get(i)), new CustomPair(new PVector(velocities.get(i)), 0));
-            periods.add(0);
-        }
-
-        //progressions.get(0).put(new PVector(12, -12, -5), new CustomPair(new PVector(-1, 1, -3), 500));
-
-        int timestep = 1;
-
-        while (periods.contains(0)){
-            for (int i = 0; i < positions.size(); i++) {
-                for (int j = 0; j < positions.size(); j++) {
-                    if (j == i) continue;
-                    int velChangeX = 0;
-                    int velChangeY = 0;
-                    int velChangeZ = 0;
-                    velChangeX = positions.get(i).getX() < positions.get(j).getX() ? 1 : -1;
-                    if (positions.get(i).getX() == positions.get(j).getX()) velChangeX = 0;
-                    velChangeY = positions.get(i).getY() < positions.get(j).getY() ? 1 : -1;
-                    if(positions.get(i).getY() == positions.get(j).getY()) velChangeY = 0;
-                    velChangeZ = positions.get(i).getZ() < positions.get(j).getZ() ? 1 : -1;
-                    if (positions.get(i).getZ() == positions.get(j).getZ()) velChangeZ = 0;
-                    velocities.get(i).add(new PVector(velChangeX, velChangeY, velChangeZ));
-                }
-            }
-            //System.out.printf("After step %d:\n", timestep);
-            for (int i = 0; i < positions.size(); i++) {
-                positions.get(i).add(velocities.get(i));
-                if(progressions.get(i).containsKey(positions.get(i)) && periods.get(i) == 0){
-                    if (progressions.get(i).get(positions.get(i)).getKey().equals(velocities.get(i))){
-                        periods.set(i, timestep - progressions.get(i).get(positions.get(i)).getTimestep());
-                    }
-                } else {
-                    progressions.get(i).put(new PVector(positions.get(i)), new CustomPair(new PVector(velocities.get(i)),timestep));
-                }
-
-            }
-            timestep++;
-//            System.out.println(timestep);
-//            System.out.println(periods);
-        }
-
-        System.out.println(periods);
-        System.out.println(timestep);
-        BigInteger[] biggies = new BigInteger[periods.size()];
-
-        for (int i = 0; i < periods.size(); i++){
-            biggies[i] = new BigInteger(Integer.toString(periods.get(i)));
-        }
-
-
-        BigInteger result = lcm(biggies[0], lcm(biggies[1], lcm(biggies[2], biggies[3])));
-
-        System.out.println(result);
-
-
+    private static List<Coordinate> createAxis(int... axis) {
+        return Arrays.stream(axis).mapToObj(Coordinate::new).collect(toList());
     }
 
-    public static BigInteger lcm(BigInteger number1, BigInteger number2) {
+    private static void calculateEnergyOfSystem(List<Coordinate> xAxis, List<Coordinate> yAxis, List<Coordinate> zAxis) {
+        for (int i = 1; i <= 1000; i++) {
+            moveOneStep(xAxis);
+            moveOneStep(yAxis);
+            moveOneStep(zAxis);
+        }
+        System.out.println("The total energy of the system after 1000 cycles: " + calculateEnergy(xAxis, yAxis, zAxis));
+    }
+
+    private static void moveOneStep(List<Coordinate> axis) {
+        axis.forEach(anAxis -> axis.stream().filter(otherAxis -> !otherAxis.equals(anAxis)).forEach(anAxis::recalculateVelocity));
+        axis.forEach(Coordinate::applyVelocity);
+    }
+
+    private static int calculateEnergy(List<Coordinate> xAxis, List<Coordinate> yAxis, List<Coordinate> zAxis) {
+        int energy = 0;
+        for(int i = 0; i < xAxis.size(); i++) {
+            energy += calculateEnergy(xAxis.get(i), yAxis.get(i), zAxis.get(i));
+        }
+        return energy;
+    }
+
+    private static int calculateEnergy(Coordinate x, Coordinate y, Coordinate z) {
+        return (Math.abs(x.getPosition()) + Math.abs(y.getPosition()) + Math.abs(z.getPosition())) * (Math.abs(x.getVelocity()) + Math.abs(y.getVelocity()) + Math.abs(z.getVelocity()));
+    }
+
+    private static void calculateStepsForCycle(List<Coordinate> xAxis, List<Coordinate> yAxis, List<Coordinate> zAxis) {
+        BigInteger stepsForCycle = lcd(lcd(calculateStepsForCycle(xAxis), calculateStepsForCycle(yAxis)), calculateStepsForCycle(zAxis));
+        System.out.println("it took " + stepsForCycle + " to complete a full cycle");
+    }
+
+    private static BigInteger calculateStepsForCycle(List<Coordinate> axis) {
+        List<Coordinate> origin = clone(axis);
+        int cycleNumber = 0;
+        while(true) {
+            moveOneStep(axis);
+            cycleNumber++;
+            if(isSame(axis, origin)) {
+                return new BigInteger(String.valueOf(cycleNumber));
+            }
+        }
+    }
+
+    private static List<Coordinate> clone(List<Coordinate> axis) {
+        return axis.stream().map(Coordinate::new).collect(toList());
+    }
+
+    private static boolean isSame(List<Coordinate> axis, List<Coordinate> otherAxis) {
+        for(int i = 0; i < axis.size(); i++) {
+            if(!axis.get(i).isSame(otherAxis.get(i))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static BigInteger lcd(BigInteger number1, BigInteger number2) {
         BigInteger gcd = number1.gcd(number2);
-        BigInteger absProduct = number1.multiply(number2).abs();
-        return absProduct.divide(gcd);
+        BigInteger abs = number1.multiply(number2).abs();
+        return abs.divide(gcd);
     }
 
-    private class CustomPair {
-        private PVector key;
-        private int timestep;
-
-        public CustomPair(PVector key, int timestep){
-            this.key = key;
-            this.timestep = timestep;
-        }
-
-        public PVector getKey() {
-            return key;
-        }
-
-        public int getTimestep() {
-            return timestep;
-        }
-    }
 }
+
+class Coordinate {
+    private int position;
+    private int velocity = 0;
+
+    Coordinate(int position) {
+        this.position = position;
+    }
+
+    Coordinate(Coordinate coordinate) {
+        this.position = coordinate.position;
+        this.velocity = coordinate.velocity;
+    }
+
+    int getPosition() {
+        return position;
+    }
+
+    int getVelocity() {
+        return velocity;
+    }
+
+    void applyVelocity() {
+        this.position += velocity;
+    }
+
+    void recalculateVelocity(Coordinate other) {
+        if (other.position > this.getPosition()) {
+            velocity++;
+        } else if (other.position < this.getPosition()) {
+            velocity--;
+        }
+    }
+
+    boolean isSame(Coordinate coordinate) {
+        return position == coordinate.position && velocity == coordinate.velocity;
+    }
+
+}
+*/
