@@ -3,16 +3,15 @@ import java.util.Arrays;
 
 public class Day5 {
 
-    public static void Day5a() throws Exception {
+    public static void main(String[] args) throws Exception{
         IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day5.txt", 1);
         intCodeComputer.executeProgram();
-        System.out.println(intCodeComputer.getOutput());
-    }
+        System.out.printf("Part 1: %d\n", intCodeComputer.getOutput());
 
-    public static void Day5b() throws Exception {
-        IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day5.txt", 5);
+        intCodeComputer.refreshProgram();
+        intCodeComputer.setInput(5);
         intCodeComputer.executeProgram();
-        System.out.println(intCodeComputer.getOutput());
+        System.out.printf("Part 2: %d\n", intCodeComputer.getOutput());
     }
 }
 
