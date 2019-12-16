@@ -4,53 +4,51 @@ import java.util.HashMap;
 
 public class Day6 {
 
-    public static void day6a() throws Exception {
+
+    public static void main(String[] args) throws Exception{
 
         HashMap<String, SpaceObject> orbits = generateMap();
 
-        int sum = 0;
+        int checkSum = orbits
+                .keySet()
+                .stream()
+                .mapToInt(i -> orbits.get(i).getAmountOfOrbits())
+                .reduce(0, Integer::sum);
 
-        for (String orbit : orbits.keySet()) {
-            sum += orbits.get(orbit).getAmountOfOrbits();
-        }
 
-        System.out.println(sum);
+        int pathLen = pathFromMeToSan(orbits);
+
+        System.out.printf("Part one: %d\n", checkSum);
+        System.out.printf("Part two: %d\n", pathLen);
     }
 
-    public static void day6b() throws Exception {
+    public static int pathFromMeToSan(HashMap<String, SpaceObject> orbits){
 
-        HashMap<String, SpaceObject> orbits = generateMap();
+        ArrayList<String> pathFromMeToCom = generatePathToCentre(orbits, "YOU");
+        ArrayList<String> pathFromSanToCom = generatePathToCentre(orbits, "SAN");
 
-        ArrayList<String> pathFromMeToCom = new ArrayList<>();
-        pathFromMeToCom.add("YOU");
-        SpaceObject spaceObject = orbits.get("YOU");
-        while (spaceObject.getParent() != null) {
-            pathFromMeToCom.add(spaceObject.getParent().getName());
-            spaceObject = spaceObject.getParent();
-        }
-
-        ArrayList<String> pathFromSanToCom = new ArrayList<>();
-        pathFromSanToCom.add("SAN");
-        SpaceObject spaceObject1 = orbits.get("SAN");
-        while (spaceObject1.getParent() != null) {
-            pathFromSanToCom.add(spaceObject1.getParent().getName());
-            spaceObject1 = spaceObject1.getParent();
-        }
-
-        int count = 0;
+        int count = 1;
         int i = pathFromMeToCom.size() - 1;
         int j = pathFromSanToCom.size() - 1;
 
-        for (; ; ) {
-            if (pathFromMeToCom.get(i) != pathFromSanToCom.get(j)) {
-                break;
-            }
+        while (pathFromMeToCom.get(i) == pathFromSanToCom.get(j)){
             count++;
             i--;
             j--;
         }
 
-        System.out.println(pathFromMeToCom.size() - 1 + pathFromSanToCom.size() - 1 - 2 * count);
+        return pathFromMeToCom.size() + pathFromSanToCom.size() - 2 * count;
+    }
+
+    public static ArrayList<String> generatePathToCentre(HashMap<String, SpaceObject> orbits, String start){
+        ArrayList<String> pathToCom = new ArrayList<>();
+        pathToCom.add(start);
+        SpaceObject spaceObject = orbits.get(start);
+        while (spaceObject.getParent() != null) {
+            pathToCom.add(spaceObject.getParent().getName());
+            spaceObject = spaceObject.getParent();
+        }
+        return pathToCom;
     }
 
     public static HashMap<String, SpaceObject> generateMap() throws Exception {
@@ -81,57 +79,45 @@ public class Day6 {
     }
 }
 
-    class SpaceObject {
+class SpaceObject {
 
-        String name;
-        int amountOfOrbits = 0;
-        SpaceObject parent;
-        ArrayList<SpaceObject> children = new ArrayList<>();
+    String name;
+    int amountOfOrbits = 0;
+    SpaceObject parent;
+    ArrayList<SpaceObject> children = new ArrayList<>();
 
-        public String getName() {
-            return name;
-        }
+    public String getName() {
+        return name;
+    }
 
-        public int getAmountOfOrbits() {
-            return amountOfOrbits;
-        }
+    public int getAmountOfOrbits() {
+        return amountOfOrbits;
+    }
 
-        public void setAmountOfOrbits(int amountOfOrbits) {
-            this.amountOfOrbits = amountOfOrbits;
-        }
+    public SpaceObject getParent() {
+        return parent;
+    }
 
-        public ArrayList<SpaceObject> getChildren() {
-            return children;
-        }
+    public void setParent(SpaceObject parent) {
+        this.parent = parent;
+    }
 
-        public void setChildren(ArrayList<SpaceObject> children) {
-            this.children = children;
-        }
-
-        public SpaceObject getParent() {
-            return parent;
-        }
-
-        public void setParent(SpaceObject parent) {
-            this.parent = parent;
-        }
-
-        public void increaseOrbits(int base) {
-            amountOfOrbits = base + amountOfOrbits + 1;
-            for (SpaceObject child : children) {
-                child.increaseOrbits(base);
-            }
-        }
-
-        public void addChild(SpaceObject spaceObject) {
-            children.add(spaceObject);
-            spaceObject.setParent(this);
-            spaceObject.increaseOrbits(amountOfOrbits);
-        }
-
-        public SpaceObject(String name) {
-            this.name = name;
+    public void increaseOrbits(int base) {
+        amountOfOrbits = base + amountOfOrbits + 1;
+        for (SpaceObject child : children) {
+            child.increaseOrbits(base);
         }
     }
+
+    public void addChild(SpaceObject spaceObject) {
+        children.add(spaceObject);
+        spaceObject.setParent(this);
+        spaceObject.increaseOrbits(amountOfOrbits);
+    }
+
+    public SpaceObject(String name) {
+        this.name = name;
+    }
+}
 
 
