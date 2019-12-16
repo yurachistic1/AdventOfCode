@@ -1,33 +1,23 @@
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Day4 {
 
-    public static void day4a() throws Exception{
+    public static void main(String[] args) throws Exception{
+        ArrayList<Integer> passwords = (ArrayList<Integer>) IntStream
+                .range(372037, 905157)
+                .filter(pass -> checkIfPass(pass))
+                .boxed()
+                .collect(Collectors.toList());
 
-        int count = 0;
+        long count = passwords
+                .stream()
+                .filter(pass -> additionalCheck(pass))
+                .count();
 
-        for(int i = 372037; i < 905157; i++){
-            if (checkIfPass(i)){
-                count++;
-            }
-
-        }
-
-        System.out.println(count);
-    }
-
-    public static void day4b() throws Exception {
-        //System.out.println(checkIfPass(122345));
-
-        int count = 0;
-
-        for (int i = 372037; i < 905157; i++) {
-            if (checkIfPass2(i)) {
-                count++;
-            }
-        }
-
-        System.out.println(count);
+        System.out.printf("Part 1: %d\n", passwords.size());
+        System.out.printf("Part 2: %d\n", count);
     }
 
     public static boolean checkIfPass(int i){
@@ -36,20 +26,18 @@ public class Day4 {
         int pass = i;
         int previousDigit = pass % 10;
         pass /= 10;
-        int currentDigit = pass % 10;
-        pass /= 10;
+
 
         while (pass > 0){
-            int nextDigit = pass % 10;
+            int currentDigit = pass % 10;
             pass /= 10;
-            if (nextDigit == currentDigit ^ currentDigit == previousDigit){
+            if (currentDigit == previousDigit){
                 twoTogether = true;
             }
-            if (nextDigit > currentDigit || currentDigit > previousDigit){
+            if (currentDigit > previousDigit){
                 increase = false;
             }
             previousDigit = currentDigit;
-            currentDigit = nextDigit;
         }
         if (twoTogether && increase){
             return true;
@@ -58,37 +46,23 @@ public class Day4 {
         return false;
     }
 
-    public static boolean checkIfPass2(int i){
-        boolean increase = true;
-        boolean twoTog = false;
+    public static boolean additionalCheck(int i){
         int pass = i;
         int previous = pass % 10;
         int seqLen = 1;
-        pass /= 10;
+
         while(pass > 0){
-            int digit = pass % 10;
             pass /= 10;
-
-            if (digit > previous){
-               increase = false;
-            }
-
-            if(digit == previous){
+            int current = pass % 10;
+            if(current == previous){
                 seqLen++;
             } else {
                 if (seqLen == 2){
-                    twoTog = true;
+                    return true;
                 }
                 seqLen = 1;
             }
-            previous = digit;
-        }
-        if (seqLen == 2){
-            twoTog = true;
-        }
-
-        if (twoTog && increase){
-            return true;
+            previous = current;
         }
         return false;
     }
