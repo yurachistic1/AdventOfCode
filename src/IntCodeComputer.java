@@ -13,7 +13,6 @@ public class IntCodeComputer {
     int phaseSetting;
 
     boolean usePhaseToInput;
-    boolean interruptAfterOutput;
     boolean terminated;
     boolean waitingForInput;
     boolean executingLazily;
@@ -27,11 +26,6 @@ public class IntCodeComputer {
             executeProgram();
         }
     }
-
-    public void setInterruptAfterOutput(boolean mode) {
-        this.interruptAfterOutput = mode;
-    }
-
     public boolean isTerminated() {
         return terminated;
     }
@@ -122,7 +116,6 @@ public class IntCodeComputer {
                 output = mem[par1MemAddr];
                 pointer += 2;
                 if (outputStore != null) outputStore.generateMatrix((int)output);
-                if (interruptAfterOutput) return false;
                 break;
             case 5:
                 pointer = mem[par1MemAddr] != 0 ? mem[par2MemAddr] : pointer + 3;
