@@ -7,8 +7,7 @@ public class Day11 {
 
     public static void day11a(){
         IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day11.txt", 0);
-        intCodeComputer.setInterruptAfterOutput(true);
-
+        intCodeComputer.setExecutingLazily(true);
         PVector currentLocation = new PVector(0, 0);
         PVector direction = new PVector(0, 1);
 
@@ -53,7 +52,7 @@ public class Day11 {
 
     public static void day11b(){
         IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day11.txt", 0);
-        intCodeComputer.setInterruptAfterOutput(true);
+        intCodeComputer.setExecutingLazily(true);
 
         PVector currentLocation = new PVector(0, 0);
         PVector direction = new PVector(0, 1);
