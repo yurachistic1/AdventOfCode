@@ -3,62 +3,63 @@ import java.util.stream.Collectors;
 
 public class Day10 {
 
-    public static void day10a() throws Exception {
+    public static void main(String[] args) throws Exception{
 
         char[][] asteroidMap = setUp();
+
+        PVector optimalPosition = findOptimalPosition(asteroidMap);
+
+        giantLaser(asteroidMap, optimalPosition);
+    }
+
+    public static PVector findOptimalPosition(char[][] map){
         int y = 0;
         int x = 0;
-        int max = 0;
-        HashSet<Double> maxGradients = new HashSet<>();
+        HashSet<Double> maxSeen = new HashSet<>();
 
-        for (int i = 0; i < asteroidMap.length; i++) {
-            for (int j = 0; j < asteroidMap[0].length; j++) {
-                HashSet<Double> gradients = new HashSet<>();
-                if (asteroidMap[i][j] == '.') {
+        for (int i = 0; i < map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                HashSet<Double> angles = new HashSet<>();
+                if (map[i][j] == '.') {
                     continue;
                 } else {
-                    for (int k = 0; k < asteroidMap.length; k++) {
-                        for (int l = 0; l < asteroidMap[0].length; l++) {
-                            double gradient = 0;
-                            if (asteroidMap[k][l] == '.' || (i == k && j == l)) {
+                    for (int k = 0; k < map.length; k++) {
+                        for (int l = 0; l < map[0].length; l++) {
+                            double angle = 0;
+                            if (map[k][l] == '.' || (i == k && j == l)) {
                                 continue;
                             } else {
-                                gradient = Math.atan2((double) (k - i), (double) (l - j)) * (180 / Math.PI);
+                                angle = Math.atan2((double) (k - i), (double) (l - j)) * (180 / Math.PI);
                             }
-                            gradients.add(gradient);
+                            angles.add(angle);
                         }
                     }
                 }
-                if (gradients.size() > max) {
-                    max = gradients.size();
-                    maxGradients = gradients;
+                if (angles.size() > maxSeen.size()) {
+                    maxSeen = angles;
                     y = i;
                     x = j;
 
                 }
             }
         }
-        List<Double> sorted = new ArrayList<>(maxGradients);
-        Collections.sort(sorted);
-        System.out.println(max);
-        System.out.printf("(%d, %d)", y, x);
-        System.out.println();
-        System.out.println(sorted);
-        System.out.println(sorted.indexOf(90.0));
+        System.out.printf("Part one: %d\n", maxSeen.size());
+        return new PVector(y, x);
     }
 
-    public static void day10b() throws Exception {
-        char[][] asteroidMap = setUp();
+    public static void giantLaser(char[][] asteroidMap, PVector optimalPosition){
+        int x = optimalPosition.getX();
+        int y = optimalPosition.getY();
 
         HashMap<Double, ArrayList<PVector>> asteroids = new HashMap<>();
 
         for (int k = 0; k < asteroidMap.length; k++) {
             for (int l = 0; l < asteroidMap[0].length; l++) {
                 double gradient = 0;
-                if (asteroidMap[k][l] == '.' || (19 == k && 27 == l)) {
+                if (asteroidMap[k][l] == '.' || (x == k && y == l)) {
                     continue;
                 } else {
-                    gradient = Math.atan2((k - 19), (l - 27)) * (180 / Math.PI);
+                    gradient = Math.atan2((k - x), (l - y)) * (180 / Math.PI);
                 }
                 if (asteroids.containsKey(gradient)) {
                     asteroids.get(gradient).add(new PVector(l, k));
@@ -76,21 +77,25 @@ public class Day10 {
 
         int count = 0;
         int index = keySet.indexOf(-90.0);
+        PVector min = null;
 
         while (count < 200){
+            if (asteroids.get(keySet.get(index)).size() != 0) {
 
-            PVector min;
-            min = Collections.min(asteroids.get(keySet.get(index)), (t0, t1) -> {
-                Integer a = (int)(Math.abs(t0.getY() - 19) + Math.abs(t0.getX() - 27));
-                Integer b = (int)(Math.abs(t1.getY() - 19) + Math.abs(t1.getX() - 27));
-                return a.compareTo(b);
-            });
-            if (count == 199){
-                System.out.println(min.getX() * 100 + min.getY());
+                min = Collections.min(asteroids.get(keySet.get(index)), (t0, t1) -> {
+                    Integer a = (int) (Math.abs(t0.getY() - x) + Math.abs(t0.getX() - y));
+                    Integer b = (int) (Math.abs(t1.getY() - x) + Math.abs(t1.getX() - y));
+                    return a.compareTo(b);
+                });
+                asteroids.get(keySet.get(index)).remove(min);
+                index = (index + 1) % keySet.size();
+                count++;
+            } else {
+                asteroids.remove(asteroids.get(index));
+                keySet.remove(index);
             }
-            index = (index + 1 ) % keySet.size();
-            count++;
         }
+        System.out.printf("Part two: %d\n", min.getX() * 100 + min.getY());
     }
 
     public static char[][] setUp() throws Exception {

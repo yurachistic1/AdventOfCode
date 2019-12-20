@@ -16,6 +16,7 @@ public class IntCodeComputer {
     boolean terminated;
     boolean waitingForInput;
     boolean executingLazily;
+    boolean allowToRetrieveIndividualOutputs;
 
     OutputStore outputStore;
 
@@ -43,6 +44,11 @@ public class IntCodeComputer {
         this.executingLazily = executingLazily;
     }
 
+
+    public void setAllowToRetrieveIndividualOutputs(boolean allowToRetrieveIndividualOutputs) {
+        this.allowToRetrieveIndividualOutputs = allowToRetrieveIndividualOutputs;
+    }
+
     public long[] getMem() {
         return mem;
     }
@@ -54,9 +60,11 @@ public class IntCodeComputer {
     public void refreshProgram() {
         System.arraycopy(ogCopy, 0, mem, 0, ogCopy.length);
         pointer = 0;
+        relativeBase = 0;
         input = 0;
         output = 0;
         terminated = false;
+        outputStore = outputStore != null ? new OutputStore() : null;
     }
 
     public void addOutputStore(){
@@ -116,6 +124,7 @@ public class IntCodeComputer {
                 output = mem[par1MemAddr];
                 pointer += 2;
                 if (outputStore != null) outputStore.generateMatrix((int)output);
+                if (allowToRetrieveIndividualOutputs) return false;
                 break;
             case 5:
                 pointer = mem[par1MemAddr] != 0 ? mem[par2MemAddr] : pointer + 3;

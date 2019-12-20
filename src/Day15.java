@@ -6,13 +6,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Day15 {
 
-    public static final HashMap<PVector, Integer> changeInPos = new HashMap<>() {{
-        put(new PVector(0, 1), 1);
-        put(new PVector(0, -1), 2);
-        put(new PVector(-1, 0), 3);
-        put(new PVector(1, 0), 4);
-    }};
-
     public static final HashMap<Integer, PVector> inputs = new HashMap<>() {{
         put(1, new PVector(0, 1));
         put(2, new PVector(0, -1));
@@ -35,7 +28,7 @@ public class Day15 {
         PVector currentPosition = new PVector(0, 0);
         int count = 0;
 
-        while (count != 5000000) {
+        while (count != 2500000) {
             int input = ThreadLocalRandom.current().nextInt(1, 5);
 
             intCodeComputer.setInput(input);
@@ -47,10 +40,8 @@ public class Day15 {
         }
 
         JFrame jFrame = new JFrame();
-
         TileForDay15 tiles = new TileForDay15(map);
         jFrame.getContentPane().add(tiles);
-
         jFrame.setResizable(false);
         jFrame.setSize(800, 200);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

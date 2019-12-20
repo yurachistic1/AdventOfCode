@@ -1,22 +1,20 @@
 public class Day13 {
-    public static void day13a() {
+
+    public static void main(String[] args) {
         IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day13.txt", 0);
         intCodeComputer.addOutputStore();
         intCodeComputer.executeProgram();
         int countBlock = 0;
 
-        for(PVector coord : intCodeComputer.outputStore.getStore().keySet()){
-            if (intCodeComputer.outputStore.getStore().get(coord) == 2){
+        for (PVector coord : intCodeComputer.outputStore.getStore().keySet()) {
+            if (intCodeComputer.outputStore.getStore().get(coord) == 2) {
                 countBlock++;
             }
         }
 
-        System.out.println(countBlock);
-    }
+        System.out.printf("Part one: %d\n", countBlock);
 
-    public static void day13b() {
-        IntCodeComputer intCodeComputer = new IntCodeComputer("./inputs/Day13.txt", 0);
-        intCodeComputer.addOutputStore();
+        intCodeComputer.refreshProgram();
         intCodeComputer.setExecutingLazily(true);
         intCodeComputer.changeProgram(0, 2);
         intCodeComputer.executeProgram();
@@ -25,21 +23,21 @@ public class Day13 {
         PVector coordsBall = null;
         PVector coordsBoard = null;
 
-        while(!intCodeComputer.isTerminated()){
+        while (!intCodeComputer.isTerminated()) {
 
-            for(PVector coord : intCodeComputer.outputStore.getStore().keySet()){
-                if (intCodeComputer.outputStore.getStore().get(coord) == 3){
+            for (PVector coord : intCodeComputer.outputStore.getStore().keySet()) {
+                if (intCodeComputer.outputStore.getStore().get(coord) == 3) {
                     coordsBoard = coord;
                 }
 
-                if (intCodeComputer.outputStore.getStore().get(coord) == 4){
+                if (intCodeComputer.outputStore.getStore().get(coord) == 4) {
                     coordsBall = coord;
                 }
             }
 
-            if (coordsBall.getX() < coordsBoard.getX()){
+            if (coordsBall.getX() < coordsBoard.getX()) {
                 input = -1;
-            } else if (coordsBall.getX() > coordsBoard.getX()){
+            } else if (coordsBall.getX() > coordsBoard.getX()) {
                 input = 1;
             } else {
                 input = 0;
@@ -48,9 +46,9 @@ public class Day13 {
             intCodeComputer.setInput(input);
         }
 
-        System.out.println(intCodeComputer.outputStore.getStore().get(new PVector(-1, 0)));
+        System.out.printf("Part two: %d\n", intCodeComputer.outputStore.getStore().get(new PVector(-1, 0)));
+
+
     }
-
 }
-
 

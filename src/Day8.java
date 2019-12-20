@@ -1,9 +1,15 @@
 import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class Day8 {
+
+    public static void main(String[] args) throws Exception{
+        day8a();
+        day8b();
+    }
 
     public static void day8a() throws Exception {
         String input = UtilityFunctions.convertInputToString(
@@ -14,7 +20,6 @@ public class Day8 {
         int min = Integer.MAX_VALUE;
         int one = 0;
         int two = 0;
-        int layer = 0;
         int totalOnLayerZero = 0;
         int totalOnLayerOne = 0;
         int totalOnLLayerTwo = 0;
@@ -28,14 +33,13 @@ public class Day8 {
                     min = totalOnLayerZero;
                     one = totalOnLayerOne;
                     two = totalOnLLayerTwo;
-                    layer = i / 6 + 1;
                 }
                 totalOnLayerZero = 0;
                 totalOnLayerOne = 0;
                 totalOnLLayerTwo = 0;
             }
         }
-        System.out.println(one * two);
+        System.out.printf("Part one: %d", one * two);
     }
 
     public static void day8b() throws Exception {
@@ -57,6 +61,7 @@ public class Day8 {
         jFrame.setResizable(false);
         jFrame.setSize(dimX * 30, dimY * 30);
         jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        jFrame.pack();
         jFrame.setVisible(true);
 
         for (int i = 0; i < arr.size(); i++) {
@@ -67,8 +72,7 @@ public class Day8 {
             for (int j = 0; j < dimX; j++) {
                 image[i][j] = layers[i][j];
                 tiles.updateImage(image);
-                jFrame.pack();
-                TimeUnit.MICROSECONDS.sleep(10);
+                TimeUnit.MICROSECONDS.sleep(2);
             }
         }
 
@@ -77,9 +81,43 @@ public class Day8 {
                 if (image[i % dimY][j] == '2') {
                     image[i % dimY][j] = layers[i + dimY][j];
                     tiles.updateImage(image);
-                    jFrame.pack();
-                    TimeUnit.MICROSECONDS.sleep(10);
+                    TimeUnit.MICROSECONDS.sleep(2);
                 }
+            }
+        }
+    }
+}
+
+class Tile extends JPanel {
+
+    int dimX = 30;
+    int dimY = 30;
+    char[][] image;
+
+    public Tile(char[][] image){
+        this.image = image;
+
+        Dimension dimension = new Dimension(image[0].length * dimX, image.length * dimY);
+
+        setPreferredSize(dimension);
+    }
+
+    public void updateImage(char[][] image){
+        this.image = image;
+        repaint();
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        for (int i = 0; i < image.length; i++){
+            for (int j = 0; j < image[0].length; j++){
+                if (image[i][j] == '0'){
+                    g.setColor(Color.BLACK);
+                } else {
+                    g.setColor(Color.WHITE);
+                }
+
+                g.fillRect(j * dimY, i * dimX, dimX, dimY);
             }
         }
     }
