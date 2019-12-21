@@ -1,127 +1,121 @@
-public class Day12{
-}
-
-/*
-import static java.util.stream.Collectors.toList;
+import javax.swing.*;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-public class Day12 {
+public class Day12{
 
     public static void main(String[] args) {
-        List<Coordinate> xAxis = createAxis(13, 16, 7, -3);
-        List<Coordinate> yAxis = createAxis(-13, 2, -18, -8);
-        List<Coordinate> zAxis = createAxis(-2,-15,-12,-8);
 
-        calculateEnergyOfSystem(xAxis, yAxis, zAxis);
-        calculateStepsForCycle(xAxis, yAxis, zAxis);
+        Axis xAxis = new Axis(new ArrayList<>(Arrays.asList(13, 16, 7, -3)));
+        Axis yAxis = new Axis(new ArrayList<>(Arrays.asList(-13, 2, -18, -8)));
+        Axis zAxis = new Axis(new ArrayList<>(Arrays.asList(-2, -15, -12, -8)));
+
+        System.out.printf("Part one: %d\n", calculateEnergy(new Axis(xAxis), new Axis(yAxis), new Axis(zAxis)));
+        System.out.printf("Part two: %d\n", lcm(calculateCycle(xAxis), lcm(calculateCycle(yAxis), calculateCycle(zAxis))));
+
+
     }
 
-    private static List<Coordinate> createAxis(int... axis) {
-        return Arrays.stream(axis).mapToObj(Coordinate::new).collect(toList());
+    public static void moveAxisOneStep(Axis axis){
+        axis.recalculateVelocity();
+        axis.applyVelocity();
     }
 
-    private static void calculateEnergyOfSystem(List<Coordinate> xAxis, List<Coordinate> yAxis, List<Coordinate> zAxis) {
-        for (int i = 1; i <= 1000; i++) {
-            moveOneStep(xAxis);
-            moveOneStep(yAxis);
-            moveOneStep(zAxis);
-        }
-        System.out.println("The total energy of the system after 1000 cycles: " + calculateEnergy(xAxis, yAxis, zAxis));
-    }
-
-    private static void moveOneStep(List<Coordinate> axis) {
-        axis.forEach(anAxis -> axis.stream().filter(otherAxis -> !otherAxis.equals(anAxis)).forEach(anAxis::recalculateVelocity));
-        axis.forEach(Coordinate::applyVelocity);
-    }
-
-    private static int calculateEnergy(List<Coordinate> xAxis, List<Coordinate> yAxis, List<Coordinate> zAxis) {
-        int energy = 0;
-        for(int i = 0; i < xAxis.size(); i++) {
-            energy += calculateEnergy(xAxis.get(i), yAxis.get(i), zAxis.get(i));
-        }
-        return energy;
-    }
-
-    private static int calculateEnergy(Coordinate x, Coordinate y, Coordinate z) {
-        return (Math.abs(x.getPosition()) + Math.abs(y.getPosition()) + Math.abs(z.getPosition())) * (Math.abs(x.getVelocity()) + Math.abs(y.getVelocity()) + Math.abs(z.getVelocity()));
-    }
-
-    private static void calculateStepsForCycle(List<Coordinate> xAxis, List<Coordinate> yAxis, List<Coordinate> zAxis) {
-        BigInteger stepsForCycle = lcd(lcd(calculateStepsForCycle(xAxis), calculateStepsForCycle(yAxis)), calculateStepsForCycle(zAxis));
-        System.out.println("it took " + stepsForCycle + " to complete a full cycle");
-    }
-
-    private static BigInteger calculateStepsForCycle(List<Coordinate> axis) {
-        List<Coordinate> origin = clone(axis);
-        int cycleNumber = 0;
-        while(true) {
-            moveOneStep(axis);
-            cycleNumber++;
-            if(isSame(axis, origin)) {
-                return new BigInteger(String.valueOf(cycleNumber));
-            }
-        }
-    }
-
-    private static List<Coordinate> clone(List<Coordinate> axis) {
-        return axis.stream().map(Coordinate::new).collect(toList());
-    }
-
-    private static boolean isSame(List<Coordinate> axis, List<Coordinate> otherAxis) {
-        for(int i = 0; i < axis.size(); i++) {
-            if(!axis.get(i).isSame(otherAxis.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static BigInteger lcd(BigInteger number1, BigInteger number2) {
+    private static BigInteger lcm(BigInteger number1, BigInteger number2) {
         BigInteger gcd = number1.gcd(number2);
         BigInteger abs = number1.multiply(number2).abs();
         return abs.divide(gcd);
     }
 
-}
+    public static BigInteger calculateCycle(Axis axis){
+        Axis copy = new Axis(axis);
+        int cycle = 1;
 
-class Coordinate {
-    private int position;
-    private int velocity = 0;
-
-    Coordinate(int position) {
-        this.position = position;
-    }
-
-    Coordinate(Coordinate coordinate) {
-        this.position = coordinate.position;
-        this.velocity = coordinate.velocity;
-    }
-
-    int getPosition() {
-        return position;
-    }
-
-    int getVelocity() {
-        return velocity;
-    }
-
-    void applyVelocity() {
-        this.position += velocity;
-    }
-
-    void recalculateVelocity(Coordinate other) {
-        if (other.position > this.getPosition()) {
-            velocity++;
-        } else if (other.position < this.getPosition()) {
-            velocity--;
+        while (true) {
+            moveAxisOneStep(axis);
+            if (axis.isSame(copy)) {
+                return new BigInteger(String.valueOf(cycle));
+            }
+            cycle++;
         }
     }
 
-    boolean isSame(Coordinate coordinate) {
-        return position == coordinate.position && velocity == coordinate.velocity;
+    public static int calculateEnergy(Axis xAxis, Axis yAxis, Axis zAxis){
+        IntStream
+                .range(0, 1000)
+                .boxed()
+                .forEach(integer -> {
+                    moveAxisOneStep(xAxis);
+                    moveAxisOneStep(yAxis);
+                    moveAxisOneStep(zAxis);
+                });
+
+        int total = IntStream.range(0, xAxis.coords.size())
+                .boxed()
+                .mapToInt(i -> {
+                    return (Math.abs(xAxis.coords.get(i)) + Math.abs(yAxis.coords.get(i)) + Math.abs(zAxis.coords.get(i)))
+                            *(Math.abs(xAxis.velocity.get(i)) + Math.abs(yAxis.velocity.get(i)) + Math.abs(zAxis.velocity.get(i)));
+                })
+                .reduce(Integer::sum)
+                .getAsInt();
+
+        return total;
+    }
+}
+
+class Axis{
+    ArrayList<Integer> coords;
+    ArrayList<Integer> velocity;
+
+    public Axis(ArrayList<Integer> coords){
+        this.coords = coords;
+        velocity = new ArrayList<>();
+        coords.forEach(integer -> velocity.add(0));
     }
 
+    public Axis(Axis axis){
+        coords = new ArrayList<>(axis.coords);
+        velocity = new ArrayList<>(axis.velocity);
+
+    }
+
+    public void applyVelocity(){
+        IntStream
+                .range(0, coords.size())
+                .boxed()
+                .forEach(i -> coords.set(i, coords.get(i) + velocity.get(i)));
+    }
+
+    public void recalculateVelocity(){
+        ArrayList<Integer> change = (ArrayList<Integer>) coords
+                .stream()
+                .mapToInt(coord -> {
+                    return coords
+                            .stream()
+                            .filter(otherCoord -> !otherCoord.equals(coord))
+                            .mapToInt(otherCoord -> (int) Math.signum(otherCoord - coord))
+                            .reduce(Integer::sum)
+                            .getAsInt();
+                })
+                .boxed()
+                .collect(Collectors.toList());
+
+        IntStream
+                .range(0, velocity.size())
+                .boxed()
+                .forEach(i -> velocity.set(i, velocity.get(i) + change.get(i)));
+
+    }
+
+    public boolean isSame(Axis axis){
+        return coords.equals(axis.coords) && velocity.equals(axis.velocity);
+    }
+
+    @Override
+    public String toString() {
+        return new String(coords.toString() + " " + velocity.toString());
+    }
 }
-*/
