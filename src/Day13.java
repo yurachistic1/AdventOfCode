@@ -47,8 +47,6 @@ public class Day13 {
         }
 
         System.out.printf("Part two: %d\n", intCodeComputer.outputStore.getStore().get(new PVector(-1, 0)));
-
-
     }
 }
 
