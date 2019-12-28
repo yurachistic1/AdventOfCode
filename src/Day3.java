@@ -4,14 +4,14 @@ import java.util.stream.Collectors;
 
 public class Day3 {
 
-    public static final HashMap<String, Integer> changeX = new HashMap<>() {{
+    public static final HashMap<String, Integer> changeX = new HashMap<String, Integer>() {{
         put("U", 0);
         put("D", 0);
         put("L", -1);
         put("R", 1);
     }};
 
-    public static final HashMap<String, Integer> changeY = new HashMap<>() {{
+    public static final HashMap<String, Integer> changeY = new HashMap<String, Integer>() {{
         put("U", 1);
         put("D", -1);
         put("L", 0);

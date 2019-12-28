@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Day15 {
 
-    public static final HashMap<Integer, PVector> inputs = new HashMap<>() {{
+    public static final HashMap<Integer, PVector> inputs = new HashMap<Integer, PVector>() {{
         put(1, new PVector(0, 1));
         put(2, new PVector(0, -1));
         put(3, new PVector(-1, 0));
