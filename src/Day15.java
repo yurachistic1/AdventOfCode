@@ -28,7 +28,7 @@ public class Day15 {
         PVector currentPosition = new PVector(0, 0);
         int count = 0;
 
-        while (count != 2500000) {
+        while (count != 5000000) {
             int input = ThreadLocalRandom.current().nextInt(1, 5);
 
             intCodeComputer.setInput(input);
