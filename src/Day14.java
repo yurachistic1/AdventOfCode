@@ -2,70 +2,54 @@ import java.util.*;
 
 public class Day14 {
     public static void main(String[] args) throws Exception {
+        System.out.printf("Part one: %d\n", calcOre(1));
+        System.out.printf("Part two: %d", binarySearch(0, 4000000, (long)Math.pow(10, 12)));
+
+    }
+
+    public static int binarySearch(int l, int r, long x) throws Exception
+    {
+        if (r >= l) {
+            int mid = l + (r - l) / 2;
+
+            if (calcOre(mid) > x)
+                return binarySearch(l, mid - 1, x);
+
+            return binarySearch(mid + 1, r, x);
+        }
+        return r;
+    }
+
+    public static long calcOre(long amountOfFuel) throws Exception{
         HashMap<String, Chemical> list = createListOfChemicals();
+        HashMap<String, Long> total = new HashMap<>();
+        total.put("FUEL", amountOfFuel);
 
-        System.out.println(list.get("FUEL").requirements);
-        System.out.println(list.size());
-        HashMap<String, Double> reqs = new HashMap<>();
-        HashMap<String, Integer> excess = new HashMap<>();
+        list.keySet()
+                .forEach(str -> list.get(str).requirements.keySet().forEach(chemName -> list.get(chemName).reqBy++));
 
-		depthFirst(list.get("FUEL"), list, 1, reqs);
-        System.out.println(reqs);
-        calcTotal(list, reqs);
 
-    }
-
-    public static void calcTotal(HashMap<String, Chemical> list, HashMap<String, Double> reqs){
-        int total = reqs
-                .keySet()
-                .stream()
-                .mapToInt(chemName -> {
-                    Chemical current = list.get(chemName);
-                    double amount = Math.ceil(reqs.get(chemName));
-                    int oreReq = (int)Math.ceil(amount/(double)current.amount) * current.requirements.get("ORE");
-                    return oreReq;
-                })
-                .reduce(Integer::sum)
-                .getAsInt();
-        System.out.println(total);
-    }
-
-    public static void depthFirst(Chemical chemical, HashMap<String, Chemical> list, double amount, HashMap<String, Double> reqs) {
-    	if (chemical.requirements.containsKey("ORE")){
-    	    reqs.put(chemical.name, reqs.getOrDefault(chemical.name, 0.0) + amount);
-    	    return;
-        } else {
-    	    for(String chem : chemical.requirements.keySet()){
-                double req = (double)amount/(double)chemical.amount * chemical.requirements.get(chem);//(int)Math.ceil((double)amount/(double)chemical.amount)
-    	        depthFirst(list.get(chem), list, req, reqs);
-            }
+        while(!(total.containsKey("ORE") && total.size() == 1)){
+            list
+                    .keySet()
+                    .stream()
+                    .filter(name -> list.get(name).reqBy == 0)
+                    .forEach(name -> {
+                        long amountNeeded = total.get(name);
+                        list.get(name).requirements.keySet().forEach(child -> {
+                            list.get(child).reqBy--;
+                            long amount = (long)list.get(name).requirements.get(child) * (long)Math.ceil((double)amountNeeded/(double)list.get(name).amount);
+                            total.put(child, total.getOrDefault(child, (long) 0) + amount);
+                        });
+                        if (name != "ORE") {
+                            total.remove(name);
+                        }
+                        list.get(name).reqBy--;
+                    });
         }
-    }
 
-    public static void depthFirstAlt(Chemical chemical, HashMap<String, Chemical> list, int amount, HashMap<String, Double> reqs, HashMap<String, Integer> excess) {
-        if (chemical.requirements.containsKey("ORE")){
-            reqs.put(chemical.name, reqs.getOrDefault(chemical.name, 0.0) + amount);
-            return;
-        } else {
-            for(String chem : chemical.requirements.keySet()){
-                int req = (int)Math.ceil((double)amount/(double)chemical.amount) * chemical.requirements.get(chem);
-                depthFirst(list.get(chem), list, req, reqs);
-            }
-        }
+        return total.get("ORE");
     }
-
-//    public static void breadthFirst(HashMap<String, Chemical> list, HashMap<String, Integer> reqs){
-//        ArrayDeque<String> nextlvl = new ArrayDeque<>();
-//        HashMap<String, Integer> current = list.get("FUEL").requirements;
-//        HashMap<String, Integer> next = new HashMap<>();
-//
-//        while(!nextlvl.isEmpty()){
-//            for (String name : current.keySet()){
-//                int req = (int)Math.ceil((double)amount/(double)chemical.amount) * chemical.requirements.get(chem);
-//                next.put(name, next.getOrDefault(name, 0) + current.get(name));
-//            }
-//        }
-//    }
 
     public static HashMap<String, Chemical> createListOfChemicals() throws Exception {
         HashMap<String, Chemical> list = new HashMap<>();
@@ -73,27 +57,31 @@ public class Day14 {
         String pattern = "(.*)( => )(.*)";
 
         input.forEach(i -> {
-            HashMap<String, Integer> reqs = new HashMap<>();
+            HashMap<String, Long> reqs = new HashMap<>();
             String name = i.replaceAll(pattern, "$3").split(" ")[1];
             int amount = Integer.parseInt(i.replaceAll(pattern, "$3").split(" ")[0]);
             String[] comps = i.replaceAll(pattern, "$1").split(", ");
             Arrays.stream(comps)
                     .forEach(j -> {
                         String[] indComp = j.split(" ");
-                        reqs.put(indComp[1], Integer.parseInt(indComp[0]));
+                        reqs.put(indComp[1], Long.parseLong(indComp[0]));
                     });
             list.put(name, new Chemical(amount, name, reqs));
         });
+
+        list.put("ORE", new Chemical(1, "ORE", new  HashMap<String, Long>()));
         return list;
     }
 }
 
 class Chemical {
-    int amount;
-    String name;
-    HashMap<String, Integer> requirements;
 
-    public Chemical(int amount, String name, HashMap<String, Integer> requirements) {
+    int reqBy = 0;
+    long amount;
+    String name;
+    HashMap<String, Long> requirements;
+
+    public Chemical(long amount, String name, HashMap<String, Long> requirements) {
         this.amount = amount;
         this.name = name;
         this.requirements = requirements;
