@@ -1,5 +1,7 @@
 module Main where
 
+import Data.Maybe
+import qualified Data.Set as S
 import Testing
 
 type Input = [Int]
@@ -26,6 +28,29 @@ test2 = test part2 [(testInput, 241861950)]
 part2 :: Input -> Int
 part2 input =
   head [a * b * c | a <- input, b <- input, c <- input, a + b + c == 2020]
+
+-- generic solution that I saw on reddit --
+
+knapsack ::
+  -- | number of items n to pick
+  Int ->
+  -- | goal sum
+  Int ->
+  -- | set of options
+  S.Set Int ->
+  -- | resulting n items that sum to the goal
+  Maybe [Int]
+knapsack 0 _ _ = Nothing
+knapsack 1 goal xs
+  | goal `S.member` xs = Just [goal]
+  | otherwise = Nothing
+knapsack n goal xs = listToMaybe $ do
+  x <- S.toList xs
+  let goal' = goal - x
+      (_, ys) = S.split x xs
+  case knapsack (n - 1) goal' ys of
+    Nothing -> []
+    Just rs -> pure (x : rs)
 
 main :: IO ()
 main = do
