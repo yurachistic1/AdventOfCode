@@ -18,19 +18,3 @@ keyValue val list
   | otherwise = Nothing
   where
     kv = break (== val) list
-
--- From Data.List.SplitOn --
--- Copied to just better understand how it works
-
-splitOn :: (a -> Bool) -> [a] -> [[a]]
-splitOn _ [] = []
-splitOn f l@(x : xs)
-  | f x = splitOn f xs
-  | otherwise = let (h, t) = break f l in h : (splitOn f t)
-
-splitOn' :: (a -> Bool) -> [a] -> [[a]]
-splitOn' f xs = split xs
-  where
-    split xs = case break f xs of
-      (chunk, []) -> chunk : []
-      (chunk, _ : rest) -> chunk : split rest
