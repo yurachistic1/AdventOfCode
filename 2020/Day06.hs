@@ -1,12 +1,12 @@
 module Main where
 
+import Data.List.Split
 import qualified Data.Set as S
-import Utilities
 
 type Input = [[String]]
 
 parse :: String -> Input
-parse = splitOn (== "") . lines
+parse = map words . splitOn "\n\n"
 
 part1 :: Input -> Int
 part1 = sum . map (S.size . S.unions . map S.fromList)

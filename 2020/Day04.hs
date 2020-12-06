@@ -1,6 +1,7 @@
 module Main where
 
 import Data.Char
+import Data.List.Split
 import qualified Data.Map as M
 import Data.Maybe (mapMaybe)
 import Parser
@@ -14,8 +15,8 @@ requiredFields = ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
 parse :: String -> Input
 parse =
   map (M.fromList . mapMaybe (keyValue ':'))
-    . splitOn (== "")
-    . splitOn' (\x -> x == '\n' || x == ' ')
+    . map words
+    . splitOn "\n\n"
 
 part1 :: Input -> Int
 part1 = length . filter (valid)
