@@ -1,6 +1,5 @@
 module Main where
 
-import Data.List.Split
 import qualified Data.Map as M
 import Data.Maybe
 import Parser
@@ -46,11 +45,10 @@ applyInstruction (State mem acc pointer) ins
 
 isLooping :: State -> Input -> (Bool, Accumulator)
 isLooping state@(State mem acc pointer) input
-  | Nothing <- currentIns = (False, acc)
-  | (Just instruction) <- currentIns =
-    case valInMem of
-      Nothing -> isLooping (applyInstruction state instruction) input
-      Just _ -> (True, acc)
+  | (_, Nothing) <- (valInMem, currentIns) = (False, acc)
+  | (Nothing, Just i) <- (valInMem, currentIns) =
+    isLooping (applyInstruction state i) input
+  | (Just _, _) <- (valInMem, currentIns) = (True, acc)
   where
     currentIns = input M.!? pointer
     valInMem = mem M.!? pointer
