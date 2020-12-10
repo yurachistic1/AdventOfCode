@@ -9,6 +9,9 @@ safeHead (x : _) = Just x
 frequencyMap :: Ord a => [a] -> M.Map a Int
 frequencyMap = M.unionsWith (+) . map (flip M.singleton 1)
 
+diffs :: [Int] -> [Int]
+diffs xs = zipWith (-) (tail xs) xs
+
 indexMap :: [a] -> M.Map Int a
 indexMap = M.fromList . zip [0 ..]
 
