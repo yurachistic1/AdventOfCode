@@ -1,6 +1,6 @@
 module Geometry where
 
-data Direction = North | East | South | West
+data Direction = North | East | South | West | NE | SE | SW | NW
   deriving (Show)
 
 turnLeft :: Direction -> Direction
@@ -36,11 +36,36 @@ normPoint (Point x y) = abs (x) + abs (y)
 distance :: Point -> Point -> Int
 distance p1 p2 = normPoint $ minusPoint p1 p2
 
+rotateRight :: Point -> Point
+rotateRight (Point x y) = Point y (- x)
+
+rotateLeft :: Point -> Point
+rotateLeft (Point x y) = Point (- y) x
+
+moveXInDir :: Int -> Direction -> Point -> Point
+moveXInDir steps dir = plusPoint (timesPoint steps $ oneStep dir)
+
 oneStep :: Direction -> Point
 oneStep North = Point 0 1
 oneStep East = Point 1 0
 oneStep South = Point 0 (-1)
 oneStep West = Point (-1) 0
+oneStep NE = Point 1 1
+oneStep SE = Point 1 (-1)
+oneStep SW = Point (-1) (-1)
+oneStep NW = Point (-1) 1
+
+neighbours4 :: Point -> [Point]
+neighbours4 point =
+  [nextIn dir | dir <- [North, East, South, West]]
+  where
+    nextIn dir = plusPoint (oneStep dir) point
+
+neighbours8 :: Point -> [Point]
+neighbours8 point =
+  [nextIn dir | dir <- [North, East, South, West, NE, SE, SW, NW]]
+  where
+    nextIn dir = plusPoint (oneStep dir) point
 
 readGrid :: String -> [(Point, Char)]
 readGrid str =
