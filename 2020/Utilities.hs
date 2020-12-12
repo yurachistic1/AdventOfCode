@@ -21,3 +21,6 @@ keyValue val list
   | otherwise = Nothing
   where
     kv = break (== val) list
+
+repeatF :: Int -> (a -> a) -> a -> a
+repeatF n f init = (iterate f init) !! n
